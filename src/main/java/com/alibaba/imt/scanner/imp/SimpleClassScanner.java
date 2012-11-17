@@ -111,7 +111,6 @@ public class SimpleClassScanner implements Scanner {
                 ret.add(new File(url.getPath()));
             }
         }
-        
         return ret;
     }
 }
