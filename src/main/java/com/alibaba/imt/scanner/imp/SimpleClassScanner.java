@@ -108,18 +108,10 @@ public class SimpleClassScanner implements Scanner {
         URL[] urls = ((URLClassLoader)contextClassLoader).getURLs();
         for(URL url : urls){
             if(url != null){
-            	String path = url.getPath();
-            	if(isMatchedPath(path)){
-            		ret.add(new File(path));
-            	}
+                ret.add(new File(url.getPath()));
             }
         }
         
         return ret;
     }
-
-	private boolean isMatchedPath(String path) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }
