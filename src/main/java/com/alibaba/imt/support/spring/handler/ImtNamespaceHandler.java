@@ -80,6 +80,7 @@ public class ImtNamespaceHandler extends NamespaceHandlerSupport {
             builder.addPropertyValue("annotationScan", annotationScan);
             builder.addPropertyValue("xmlDataList", xmlDataList);
             builder.addPropertyValue("beanAdapter", new SpringBeanAdapter());
+            builder.setInitMethodName("init");
         }
 
         /**

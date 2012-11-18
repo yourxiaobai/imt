@@ -40,31 +40,37 @@ public class InterfaceManagementTool{
     private boolean annotationScan = false;
    
     public void init(){
-        if(dataList == null){
-        	dataList = new ArrayList<Map<String,Object>>();
-        	interfaceInfoList = new ArrayList<InterfaceInfo>();
-        	interfaceInfoMap = new HashMap<String, InterfaceInfo>();
-        }else{
-        	dataList.clear();
-        	interfaceInfoList.clear();
-        	interfaceInfoMap.clear();
-        }
-        Set<String> classNameSet = scanner.scan(pkgs);
-        for(String className : classNameSet){
-            handler.handleClass(className, dataList);
-        }
-        if(xmlDataList != null){
-            dataList.addAll(xmlDataList);
-        }
-        for(Map<String,Object> data : dataList){
-            if(beanAdapter != null){
-                Object[] additionalDatas = beanAdapter.getBeanDatas((Class<?>)data.get("clazz"));
-                data.put("additionalDatas", additionalDatas);
-            }
-            InterfaceInfo ii = Util.mapToBean(data, InterfaceInfo.class);
-            interfaceInfoList.add(ii);
-            interfaceInfoMap.put(ii.getKey(), ii);
-        }
+    	try{
+	        if(dataList == null){
+	        	dataList = new ArrayList<Map<String,Object>>();
+	        	interfaceInfoList = new ArrayList<InterfaceInfo>();
+	        	interfaceInfoMap = new HashMap<String, InterfaceInfo>();
+	        }else{
+	        	dataList.clear();
+	        	interfaceInfoList.clear();
+	        	interfaceInfoMap.clear();
+	        }
+	        Set<String> classNameSet = scanner.scan(pkgs);
+	        for(String className : classNameSet){
+	            handler.handleClass(className, dataList);
+	        }
+	        if(xmlDataList != null){
+	            dataList.addAll(xmlDataList);
+	        }
+	        for(Map<String,Object> data : dataList){
+	            if(beanAdapter != null){
+	                Object[] additionalDatas = beanAdapter.getBeanDatas((Class<?>)data.get("clazz"));
+	                data.put("additionalDatas", additionalDatas);
+	            }
+	            InterfaceInfo ii = Util.mapToBean(data, InterfaceInfo.class);
+	            interfaceInfoList.add(ii);
+	            interfaceInfoMap.put(ii.getKey(), ii);
+	        }
+    	}catch(Exception e){
+    		//There is for container can start up normally
+    		dataList = null;
+    		e.printStackTrace();
+    	}
         
     }
     
