@@ -218,6 +218,7 @@ public class InterfaceManagementTool{
      */
     private <T>T[] convertArrayArgument(String argStr, Class<T> componentType){
         List<T> list = JSON.parseArray(argStr, componentType);
+        @SuppressWarnings("unchecked")
         T[] arr = list.toArray((T[])Array.newInstance(componentType, 0));
         return arr;
     }
