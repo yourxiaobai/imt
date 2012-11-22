@@ -43,12 +43,8 @@ public class InterfaceManagementTool{
     	try{
 	        if(dataList == null){
 	        	dataList = new ArrayList<Map<String,Object>>();
-	        	interfaceInfoList = new ArrayList<InterfaceInfo>();
-	        	interfaceInfoMap = new HashMap<String, InterfaceInfo>();
 	        }else{
 	        	dataList.clear();
-	        	interfaceInfoList.clear();
-	        	interfaceInfoMap.clear();
 	        }
 	        Set<String> classNameSet = scanner.scan(pkgs);
 	        for(String className : classNameSet){
@@ -56,15 +52,6 @@ public class InterfaceManagementTool{
 	        }
 	        if(xmlDataList != null){
 	            dataList.addAll(xmlDataList);
-	        }
-	        for(Map<String,Object> data : dataList){
-	            if(beanAdapter != null){
-	                Object[] additionalDatas = beanAdapter.getBeanDatas((Class<?>)data.get("clazz"));
-	                data.put("additionalDatas", additionalDatas);
-	            }
-	            InterfaceInfo ii = Util.mapToBean(data, InterfaceInfo.class);
-	            interfaceInfoList.add(ii);
-	            interfaceInfoMap.put(ii.getKey(), ii);
 	        }
     	}catch(Exception e){
     		//There is for container can start up normally
@@ -74,10 +61,31 @@ public class InterfaceManagementTool{
         
     }
     
+    private void initData(){
+        if(interfaceInfoList == null || interfaceInfoMap == null){
+            interfaceInfoList = new ArrayList<InterfaceInfo>();
+            interfaceInfoMap = new HashMap<String, InterfaceInfo>();
+        }else{
+            interfaceInfoList.clear();
+            interfaceInfoMap.clear();
+        }
+        for(Map<String,Object> data : dataList){
+            if(beanAdapter != null){
+                Object[] additionalDatas = beanAdapter.getBeanDatas((Class<?>)data.get("clazz"));
+                data.put("additionalDatas", additionalDatas);
+            }
+            InterfaceInfo ii = Util.mapToBean(data, InterfaceInfo.class);
+            interfaceInfoList.add(ii);
+            interfaceInfoMap.put(ii.getKey(), ii);
+        }
+    }
+    
     public List<InterfaceInfo> getInterfaceInfoList(boolean refresh){
-    	if(this.dataList == null || refresh){
+    	if(refresh){
     		init();
-    		
+    	}
+    	if(interfaceInfoList == null || refresh){
+    	    initData();
     	}
     	return this.interfaceInfoList;
     }
@@ -87,9 +95,12 @@ public class InterfaceManagementTool{
     }
     
     public Map<String, InterfaceInfo> getInterfaceInfoMap(boolean refresh){
-    	if(this.dataList == null || refresh){
-    		init();
-    	}
+        if(refresh){
+            init();
+        }
+        if(interfaceInfoMap == null || refresh){
+            initData();
+        }
     	return this.interfaceInfoMap;
     }
     
