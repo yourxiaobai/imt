@@ -259,6 +259,7 @@ jQuery(function($) {
 	$("#imt_group_1").change(function() {
 		//$("#imt_group_2").html($("#" + $(this).val()).clone(true));
 		$("select.imt-se-2").hide();
+		$("tbody").hide();
 		$("#" + $(this).val()).show();
 	});
 	

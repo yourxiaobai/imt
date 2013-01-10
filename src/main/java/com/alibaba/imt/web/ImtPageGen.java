@@ -56,10 +56,12 @@ public class ImtPageGen {
 			VelocityEngine ve = new VelocityEngine();
 			ve.setProperty("resource.loader", "imt");
 			ve.setProperty("imt.resource.loader.class", ImtResourceLoader.class.getName());
+			ve.setProperty("input.encoding", "UTF-8");
+			ve.setProperty("output.encoding", "UTF-8");
 
 			ve.init();
 			
-			Template template = ve.getTemplate("page.vm");
+			Template template = ve.getTemplate("page.vm", "UTF-8");
 			
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);

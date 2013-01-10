@@ -32,6 +32,8 @@ public class ImtServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
+		resp.setContentType("text/html;charset=UTF-8");
+		
 		resp.getWriter().print(process(new ImtWebContext(
 				req.getRequestURL().toString(),
 				contextAttribute, 

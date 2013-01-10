@@ -28,6 +28,8 @@ public class ImtFilter implements Filter{
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+		resp.setContentType("text/html;charset=UTF-8");
+		
 		resp.getWriter().print(process(new ImtWebContext(
 				((HttpServletRequest)req).getRequestURL().toString(),
 				contextAttribute, 
