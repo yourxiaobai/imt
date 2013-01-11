@@ -17,15 +17,16 @@
 		<select id="imt_group_1">
 			<option value ="">--请选择--</option>
 			#foreach($group in $groups)
-			 <option value ="group_1_$velocityCount">$group.name</option>
+			 <option value ="group1_$velocityCount">$group.name</option>
 			#end 
 		</select>
 		<span>读写类别：</span>
 		#foreach($group in $groups)
-			<select id="group_1_$velocityCount" class="imt-se-2" style="display:none">
+			#set($group2index = $velocityCount)
+			<select id="group1_$velocityCount" class="imt-se-2" style="display:none">
 				<option value ="">--请选择--</option>
 				#foreach($nextGroup in $group.nexts)
-					<option value ="data_$velocityCount">$nextGroup.name</option>
+					<option value ="group2_${group2index}_data_$velocityCount">$nextGroup.name</option>
 				#end 
 			</select>
 		#end
@@ -50,8 +51,9 @@
 		</thead>
 		
 		#foreach($group in $groups)
+			#set($group2index = $velocityCount)
 			#foreach($nextGroup in $group.nexts)
-				<tbody id="data_$velocityCount" style="display:none">
+				<tbody id="group2_${group2index}_data_$velocityCount" style="display:none">
 					#foreach($item in $nextGroup.interfaceInfos)
 						<form id="form_${nextGroup.uuid}_$velocityCount">
 						<tr>

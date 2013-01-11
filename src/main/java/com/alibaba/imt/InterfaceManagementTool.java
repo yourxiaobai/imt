@@ -115,6 +115,11 @@ public class InterfaceManagementTool{
         }
         Class<?>[] argumentClasses = ii.getArgumentClasses();
         
+        //防止空指针
+        if (null == args) {
+        	args = new Object[0];
+        }
+        
         args = Arrays.copyOfRange(args, 0, args.length, Object[].class);//make sure the args is an Object[]
         CheckResult<String> checkResult = checkAndConvertArgs(argumentClasses, args);
         if(!checkResult.isPassed()){
