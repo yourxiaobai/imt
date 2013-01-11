@@ -1,7 +1,6 @@
 package com.alibaba.imt.web;
 
 import static com.alibaba.imt.util.StringUtil.trimToNull;
-import static org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,11 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
@@ -23,7 +19,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.imt.InterfaceManagementTool;
+import com.alibaba.imt.adapter.privileges.ImtPrivilege;
 import com.alibaba.imt.bean.InterfaceInfo;
+import com.alibaba.imt.support.spring.BeanUtils;
 
 /**
  * 页面生成工具
@@ -33,18 +31,19 @@ import com.alibaba.imt.bean.InterfaceInfo;
 public class ImtPageGen {
 	
 	public static void process(ImtWebContext imtWebContext) throws IOException {
-		InterfaceManagementTool tool = getInterfaceManagementTool(imtWebContext.getServletContext(), imtWebContext.getContextAttribute());
+		initInterfaceManagementTool(imtWebContext);
 		
 		String result = null;
-		
 		if (null == trimToNull(imtWebContext.getKey())) {
+			//验证权限
+			authUser(imtWebContext);
 			//初始化页面
-			initData(tool, imtWebContext);
+			initData(imtWebContext);
 			result = merge(imtWebContext);
 			//imtWebContext.setHtmlContentType();
 		} else if (null != imtWebContext.getAdditionalData()){
 			//调方法
-			Object ret = tool.invoke(imtWebContext.getKey(), imtWebContext.getAdditionalData(), imtWebContext.getArgs());
+			Object ret = imtWebContext.getInterfaceManagementTool().invoke(imtWebContext.getKey(), imtWebContext.getAdditionalData(), imtWebContext.getArgs());
 			result = JSON.toJSONString(ret);
 			//imtWebContext.setJsonContentType();
 		} else {
@@ -75,9 +74,9 @@ public class ImtPageGen {
 		}
 	}
 	
-	private static void initData(InterfaceManagementTool tool, ImtWebContext imtWebContext) {
+	private static void initData(ImtWebContext imtWebContext) {
 		List<ImtGroup> groups = new ArrayList<ImtGroup>();
-		
+		InterfaceManagementTool tool = imtWebContext.getInterfaceManagementTool();
 		List<InterfaceInfo> interfaceInfos = tool.getInterfaceInfoList();
 		for (InterfaceInfo info : interfaceInfos) {
 			String[] datas = info.getDatas();
@@ -111,43 +110,49 @@ public class ImtPageGen {
 		imtWebContext.put("items", tool.getInterfaceInfoList());
 		imtWebContext.put("url", imtWebContext.getUrl());
 		imtWebContext.put("encoding", imtWebContext.getEncoding());
+		imtWebContext.put("authed", imtWebContext.isAuthed());
 	}
 
-	private static InterfaceManagementTool getInterfaceManagementTool(ServletContext sc, String contextAttribute) {
-		InterfaceManagementTool interfaceManagementTool = null;
+	private static void authUser(ImtWebContext imtWebContext) {
+		WebApplicationContext webApplicationContext =  BeanUtils.findWebApplicationContext(imtWebContext.getServletContext(), imtWebContext.getContextAttribute());
 		
-		WebApplicationContext webApplicationContext = findWebApplicationContext(sc, contextAttribute);
-	
+		List<ImtPrivilege> imtPrivileges = null;
 		if (null != webApplicationContext) {
-			//Spring3.0后才支持 <T> T getBean(Class<T> requiredType) throws BeansException;
-			//为了兼容以前版本，故如下
-			String[] names = webApplicationContext.getBeanNamesForType(InterfaceManagementTool.class);
-			for (String name : names) {
-				interfaceManagementTool = (InterfaceManagementTool) webApplicationContext.getBean(name);
-				if (null != interfaceManagementTool) {
-					break;
-				}
+			imtPrivileges = BeanUtils.getBeanByType(ImtPrivilege.class, webApplicationContext);
+		}
+		
+		if (null == imtPrivileges) {
+			throw new RuntimeException("ImtPrivilege,目前仅支持基于spring的配置，请耐心等候!");
+		}
+		
+		for (ImtPrivilege privilege : imtPrivileges) {
+			if (privilege.authUser()) {
+				imtWebContext.setAuthed(true);
+				break;
 			}
 		}
 		
-		if (null == interfaceManagementTool) {
-			throw new RuntimeException("目前仅支持基于spring的配置，请耐心等候!");
-		}
-		
-		return interfaceManagementTool;
 	}
 	
-	private static WebApplicationContext findWebApplicationContext(ServletContext sc, String contextAttribute) {
-		WebApplicationContext webApplicationContext = null;
-		contextAttribute = trimToNull(contextAttribute);
+	private static void initInterfaceManagementTool(ImtWebContext imtWebContext) {
+		InterfaceManagementTool interfaceManagementTool = null;
 		
-		if (null == contextAttribute) {
-			webApplicationContext = getWebApplicationContext(sc);
-		} else {
-			webApplicationContext = getWebApplicationContext(sc, contextAttribute);
+		WebApplicationContext webApplicationContext =  BeanUtils.findWebApplicationContext(imtWebContext.getServletContext(), imtWebContext.getContextAttribute());
+	
+		if (null != webApplicationContext) {
+			List<InterfaceManagementTool> tools = BeanUtils.getBeanByType(InterfaceManagementTool.class, webApplicationContext);
+			if (null != tools && tools.size() > 1) {
+				throw new RuntimeException("配置了多个InterfaceManagementTool， 请检查");
+			}
+			
+			interfaceManagementTool= tools.get(0);
 		}
 		
-		return webApplicationContext;
+		if (null == interfaceManagementTool) {
+			throw new RuntimeException("InterfaceManagementTool,目前仅支持基于spring的配置，请耐心等候!");
+		}
+		
+		imtWebContext.setInterfaceManagementTool(interfaceManagementTool);
 	}
 	
 	public static class ImtResourceLoader extends ResourceLoader {

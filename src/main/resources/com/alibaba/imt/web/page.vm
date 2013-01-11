@@ -9,6 +9,8 @@
 </head>
 <body>
 
+#if($authed)
+
 	<fieldset style="border:1px solid #E2E9EE; padding:10px;">
 	  <legend>&nbsp;选择分组&nbsp;</legend>
 		
@@ -289,7 +291,9 @@ jQuery(function($) {
 });
 </script>
 
-
+#else
+	用户没有登陆，或者没有权限
+#end
 
 </body>
 </html>

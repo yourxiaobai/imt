@@ -3,12 +3,16 @@ package com.alibaba.imt.web;
 import static com.alibaba.imt.util.StringUtil.trimToNull;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.VelocityContext;
+
+import com.alibaba.imt.InterfaceManagementTool;
+import com.alibaba.imt.adapter.privileges.ImtPrivilege;
 
 /**
  * 
@@ -26,6 +30,10 @@ public class ImtWebContext extends VelocityContext{
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
 	private final String encoding;
+	
+	private InterfaceManagementTool interfaceManagementTool;
+	private List<ImtPrivilege> imtPrivileges;
+	private boolean isAuthed;
 	
 	public ImtWebContext(HttpServletRequest request, HttpServletResponse response,
 			String url, String contextAttribute,
@@ -65,6 +73,31 @@ public class ImtWebContext extends VelocityContext{
 
 	public String getEncoding() {
 		return trimToNull(encoding) == null ? DEFAULT_ENCODING : trimToNull(encoding);
+	}
+
+	public InterfaceManagementTool getInterfaceManagementTool() {
+		return interfaceManagementTool;
+	}
+
+	public void setInterfaceManagementTool(
+			InterfaceManagementTool interfaceManagementTool) {
+		this.interfaceManagementTool = interfaceManagementTool;
+	}
+
+	public List<ImtPrivilege> getImtPrivileges() {
+		return imtPrivileges;
+	}
+
+	public void setImtPrivileges(List<ImtPrivilege> imtPrivileges) {
+		this.imtPrivileges = imtPrivileges;
+	}
+
+	public boolean isAuthed() {
+		return isAuthed;
+	}
+
+	public void setAuthed(boolean isAuthed) {
+		this.isAuthed = isAuthed;
 	}
 
 	public String getUrl() {

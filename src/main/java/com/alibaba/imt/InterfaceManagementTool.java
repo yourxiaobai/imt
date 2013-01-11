@@ -278,7 +278,7 @@ public class InterfaceManagementTool{
         this.annotationScan = annotationScan;
     }
 
-    public static void main( String[] args ){
+	public static void main( String[] args ){
 
         Set<String> pkgs = new HashSet<String>();
         pkgs.add("com.alibaba.imt");
