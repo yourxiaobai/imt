@@ -1,7 +1,12 @@
 package com.alibaba.imt.web;
 
+import static com.alibaba.imt.util.StringUtil.trimToNull;
+
+import java.io.IOException;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.VelocityContext;
 
@@ -11,23 +16,55 @@ import org.apache.velocity.VelocityContext;
  *
  */
 public class ImtWebContext extends VelocityContext{
+	private static final String DEFAULT_ENCODING = "UTF-8";
 	private final String url;
 	private final String contextAttribute;
 	private final ServletContext servletContext;
 	private final String[] args;
 	private final String[] additionalData;
 	private final String key;
+	private final HttpServletRequest request;
+	private final HttpServletResponse response;
+	private final String encoding;
 	
-	public ImtWebContext(String url, String contextAttribute,
-			ServletContext servletContext, String[] args,
+	public ImtWebContext(HttpServletRequest request, HttpServletResponse response,
+			String url, String contextAttribute,
+			String encoding, ServletContext servletContext, String[] args,
 			String[] additionalData, String key) {
 		super();
+		this.request = request;
+		this.response = response;
 		this.url = url;
 		this.contextAttribute = contextAttribute;
+		this.encoding = encoding;
 		this.servletContext = servletContext;
 		this.args = args;
 		this.additionalData = additionalData;
 		this.key = key;
+	}
+
+	public void render(String content) throws IOException {
+		response.getWriter().print(content);
+	}
+	
+	public void setHtmlContentType() {
+		response.setContentType("text/html;charset=" + getEncoding());
+	}
+	
+	public void setJsonContentType() {
+		response.setContentType("application/json;charset=" + getEncoding());
+	}
+	
+	public HttpServletResponse getResponse() {
+		return response;
+	}
+
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+
+	public String getEncoding() {
+		return trimToNull(encoding) == null ? DEFAULT_ENCODING : trimToNull(encoding);
 	}
 
 	public String getUrl() {

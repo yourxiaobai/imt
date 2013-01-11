@@ -1,6 +1,5 @@
 package com.alibaba.imt.web.servlet;
 
-import static com.alibaba.imt.util.StringUtil.trimToNull;
 import static com.alibaba.imt.web.ImtPageGen.process;
 
 import java.io.IOException;
@@ -13,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.imt.web.ImtWebContext;
 
@@ -25,19 +25,21 @@ public class ImtFilter implements Filter{
 	//配置了spring容器，且配置了特殊的容器名字时，需要把容器名字注入
 	private String contextAttribute;
 	private ServletContext servletContext;
-
+	private String encoding;
+	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-		resp.setContentType("text/html;charset=UTF-8");
-		
-		resp.getWriter().print(process(new ImtWebContext(
-				((HttpServletRequest)req).getRequestURL().toString(),
-				contextAttribute, 
-				servletContext, 
-				req.getParameterValues("arg"), 
-				req.getParameterValues("additionalData"), 
-				req.getParameter("key")
-		)));
+		process(new ImtWebContext(
+			(HttpServletRequest)req, 
+			(HttpServletResponse)resp,
+			((HttpServletRequest)req).getRequestURL().toString(), 
+			contextAttribute, 
+			encoding, 
+			servletContext, 
+			req.getParameterValues("arg"), 
+			req.getParameterValues("additionalData"), 
+			req.getParameter("key")
+		));
 	}
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -47,17 +49,23 @@ public class ImtFilter implements Filter{
 	@Override
 	public void destroy() {
 	}
-
-	public final ServletContext getServletContext() {
-		return servletContext;
-	}
-	
-	public final String getContextAttribute() {
+	public String getContextAttribute() {
 		return contextAttribute;
 	}
-
-	public final void setContextAttribute(String contextAttribute) {
-		this.contextAttribute = trimToNull(contextAttribute);
+	public void setContextAttribute(String contextAttribute) {
+		this.contextAttribute = contextAttribute;
 	}
-
+	public ServletContext getServletContext() {
+		return servletContext;
+	}
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
+	public String getEncoding() {
+		return encoding;
+	}
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+	
 }

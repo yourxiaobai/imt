@@ -23,6 +23,7 @@ public class ImtServlet extends HttpServlet{
 	//配置了spring容器，且配置了特殊的容器名字时，需要把容器名字注入
 	private String contextAttribute;
 	private ServletContext servletContext;
+	private String encoding;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,17 +32,17 @@ public class ImtServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		resp.setContentType("text/html;charset=UTF-8");
-		
-		resp.getWriter().print(process(new ImtWebContext(
-				req.getRequestURL().toString(),
-				contextAttribute, 
-				servletContext, 
-				req.getParameterValues("arg"), 
-				req.getParameterValues("additionalData"), 
-				req.getParameter("key")
-		)));
+		process(new ImtWebContext(
+			req,
+			resp,
+			req.getRequestURL().toString(),
+			contextAttribute, 
+			encoding,
+			servletContext, 
+			req.getParameterValues("arg"), 
+			req.getParameterValues("additionalData"), 
+			req.getParameter("key")
+		));
 	}
 	
 	@Override
@@ -59,6 +60,18 @@ public class ImtServlet extends HttpServlet{
 
 	public final void setContextAttribute(String contextAttribute) {
 		this.contextAttribute = trimToNull(contextAttribute);
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 
 }

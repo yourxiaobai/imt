@@ -3,6 +3,7 @@ package com.alibaba.imt.web;
 import static com.alibaba.imt.util.StringUtil.trimToNull;
 import static org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import com.alibaba.imt.bean.InterfaceInfo;
  */
 public class ImtPageGen {
 	
-	public static String process(ImtWebContext imtWebContext) {
+	public static void process(ImtWebContext imtWebContext) throws IOException {
 		InterfaceManagementTool tool = getInterfaceManagementTool(imtWebContext.getServletContext(), imtWebContext.getContextAttribute());
 		
 		String result = null;
@@ -39,29 +40,31 @@ public class ImtPageGen {
 		if (null == trimToNull(imtWebContext.getKey())) {
 			//初始化页面
 			initData(tool, imtWebContext);
-			result = render(imtWebContext);
+			result = merge(imtWebContext);
+			//imtWebContext.setHtmlContentType();
 		} else if (null != imtWebContext.getAdditionalData()){
 			//调方法
 			Object ret = tool.invoke(imtWebContext.getKey(), imtWebContext.getAdditionalData(), imtWebContext.getArgs());
 			result = JSON.toJSONString(ret);
+			//imtWebContext.setJsonContentType();
 		} else {
 			throw new RuntimeException("参数错误:" + imtWebContext);
 		}
-		
-		return result;
+		imtWebContext.setHtmlContentType();
+		imtWebContext.render(result);
 	}
 	
-	private static String render(VelocityContext context) {
+	private static String merge(ImtWebContext context) {
 		try {
 			VelocityEngine ve = new VelocityEngine();
 			ve.setProperty("resource.loader", "imt");
 			ve.setProperty("imt.resource.loader.class", ImtResourceLoader.class.getName());
 			ve.setProperty("input.encoding", "UTF-8");
-			ve.setProperty("output.encoding", "UTF-8");
+			ve.setProperty("output.encoding", context.getEncoding());
 
 			ve.init();
 			
-			Template template = ve.getTemplate("page.vm", "UTF-8");
+			Template template = ve.getTemplate("page.vm", context.getEncoding());
 			
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
@@ -107,6 +110,7 @@ public class ImtPageGen {
 		imtWebContext.put("groups", groups);
 		imtWebContext.put("items", tool.getInterfaceInfoList());
 		imtWebContext.put("url", imtWebContext.getUrl());
+		imtWebContext.put("encoding", imtWebContext.getEncoding());
 	}
 
 	private static InterfaceManagementTool getInterfaceManagementTool(ServletContext sc, String contextAttribute) {
