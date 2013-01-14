@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 
 import com.alibaba.imt.InterfaceManagementTool;
 import com.alibaba.imt.support.spring.adapter.SpringBeanAdapter;
+import com.alibaba.imt.support.spring.scanner.SpringClassScanner;
 import com.alibaba.imt.util.Util;
 
 /**
@@ -78,6 +79,7 @@ public class ImtNamespaceHandler extends NamespaceHandlerSupport {
             builder.addPropertyValue("annotationScan", annotationScan);
             builder.addPropertyValue("xmlDataList", xmlDataList);
             builder.addPropertyValue("beanAdapter", new SpringBeanAdapter());
+            builder.addPropertyValue("scanner", new SpringClassScanner());
             builder.setInitMethodName("init");
         }
 

@@ -50,10 +50,10 @@ public class InterfaceHandler extends ClassVisitor implements Handler,Opcodes {
 	}
 
     @Override
-    public void handleClass(String className, List<Map<String,Object>> dataList) {
+    public void handleClass(String classResource, List<Map<String,Object>> dataList) {
         this.dataList = dataList;
     	ClassReader cr = null;
-    	InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(className + ".class");
+    	InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(classResource);
     	try {
 			cr = new ClassReader(is);
 		} catch (IOException e) {
