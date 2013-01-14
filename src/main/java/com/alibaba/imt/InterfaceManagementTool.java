@@ -30,8 +30,8 @@ import com.alibaba.imt.util.Util;
 public class InterfaceManagementTool{
     private Set<String> pkgs;
     private BeanAdapter beanAdapter;
-    private Scanner scanner = new SimpleClassScanner();
-    private Handler handler = new InterfaceHandler();
+    private Scanner scanner;
+    private Handler handler;
     private List<Map<String,Object>> dataList = null;
     private List<Map<String,Object>> xmlDataList = null;
     private List<InterfaceInfo> interfaceInfoList = null;
@@ -46,9 +46,15 @@ public class InterfaceManagementTool{
 	        }else{
 	        	dataList.clear();
 	        }
-	        Set<String> classNameSet = scanner.scan(pkgs);
-	        for(String className : classNameSet){
-	            handler.handleClass(className, dataList);
+	        if(scanner == null){
+	            scanner = new SimpleClassScanner();
+	        }
+	        Set<String> classResourceSet = scanner.scan(pkgs);
+	        if(handler == null){
+	            handler = new InterfaceHandler();
+	        }
+	        for(String classResource : classResourceSet){
+	            handler.handleClass(classResource, dataList);
 	        }
 	        if(xmlDataList != null){
 	            dataList.addAll(xmlDataList);
@@ -114,12 +120,10 @@ public class InterfaceManagementTool{
         	throw new RuntimeException("No class and method can be found: " + key);
         }
         Class<?>[] argumentClasses = ii.getArgumentClasses();
-        
         //防止空指针
         if (null == args) {
-        	args = new Object[0];
+            args = new Object[0];
         }
-        
         args = Arrays.copyOfRange(args, 0, args.length, Object[].class);//make sure the args is an Object[]
         CheckResult<String> checkResult = checkAndConvertArgs(argumentClasses, args);
         if(!checkResult.isPassed()){
@@ -278,7 +282,23 @@ public class InterfaceManagementTool{
         this.annotationScan = annotationScan;
     }
 
-	public static void main( String[] args ){
+    public Scanner getScanner() {
+        return scanner;
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    public static void main( String[] args ){
 
         Set<String> pkgs = new HashSet<String>();
         pkgs.add("com.alibaba.imt");

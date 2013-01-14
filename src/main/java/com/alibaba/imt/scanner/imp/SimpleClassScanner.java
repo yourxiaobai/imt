@@ -39,30 +39,29 @@ public class SimpleClassScanner implements Scanner {
         if(pkgs == null){
             throw new IllegalArgumentException("The pkgs argument cannot be null!");
         }
-        Set<String> allClassNameSet = new HashSet<String>();
+        Set<String> allClassResourceSet = new HashSet<String>();
         for(String pkgName : pkgs){
-            Set<String> classNameSet = this.getClassInPackage(pkgName);
-            allClassNameSet.addAll(classNameSet);
+            Set<String> classResourceSet = this.getClassInPackage(pkgName);
+            allClassResourceSet.addAll(classResourceSet);
            
         }
-        return allClassNameSet;
+        return allClassResourceSet;
     }
     
     private Set<String> getClassInPackage(String pkgName) {
         Set<String> ret = new HashSet<String>();
-        String innerPkgName = pkgName.replace('.', '/');
-        String rPath = innerPkgName + "/";
+        String packagePath = pkgName.replace('.', '/') + "/";
         try {
             List<File>  classPaths = getClassPath();
             for (File classPath : classPaths) {
                 if (!classPath.exists())
                     continue;
                 if (classPath.isDirectory()) {
-                    File dir = new File(classPath, rPath);
+                    File dir = new File(classPath, packagePath);
                     if (!dir.exists()){
                         continue;
                     }
-                    recurCollect(dir, innerPkgName, ret);
+                    recurCollect(dir, packagePath, ret);
                     
                 } else {
                     FileInputStream fis = new FileInputStream(classPath);
@@ -70,8 +69,8 @@ public class SimpleClassScanner implements Scanner {
                     JarEntry e = null;
                     while ((e = jis.getNextJarEntry()) != null) {
                         String eName = e.getName();
-                        if (eName.startsWith(rPath) && eName.endsWith(".class")) {
-                            ret.add(eName.substring(0, eName.length() - 6));
+                        if (eName.startsWith(packagePath) && eName.endsWith(".class")) {
+                            ret.add(eName);
                         }
                         jis.closeEntry();
                     }
@@ -85,16 +84,16 @@ public class SimpleClassScanner implements Scanner {
         return ret;
     }
 
-    private void recurCollect(File dir, String innerPkgName, Set<String> ret) {
+    private void recurCollect(File dir, String packagePath, Set<String> ret) {
         for (File file : dir.listFiles()) {
             if (file.isFile()) {
-                String clsName = file.getName();
-                if(clsName.endsWith(".class")){
-                    clsName = innerPkgName + "/" + clsName.substring(0, clsName.length() - 6);
-                    ret.add(clsName);
+                String fileName = file.getName();
+                if(fileName.endsWith(".class")){
+                    String classResource = packagePath + fileName;
+                    ret.add(classResource);
                 }
             }else{
-                recurCollect(file, innerPkgName + "/" + file.getName(), ret);
+                recurCollect(file, packagePath + file.getName(), ret);
             }
         }
         
