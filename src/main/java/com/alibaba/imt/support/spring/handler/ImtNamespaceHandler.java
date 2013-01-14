@@ -31,9 +31,9 @@ import com.alibaba.imt.util.Util;
  */
 public class ImtNamespaceHandler extends NamespaceHandlerSupport {
 
-	private static final String PKGS_ELEMENT = "annotation-scan-pkgs";
+	private static final String PATHS_ELEMENT = "annotation-scan-paths";
 	private static final String CLASS_ELEMENT = "interface-class";
-	private static final String PKG_ELEMENT = "pkg";
+	private static final String PATH_ELEMENT = "path";
 	private static final String DATA_ELEMENT = "data";
 	private static final String INTERFACE_ELEMENT = "interface";
 	private static final String CLASS_NAME_ATTR = "className";
@@ -62,20 +62,20 @@ public class ImtNamespaceHandler extends NamespaceHandlerSupport {
 		@Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 		    super.doParse(element, parserContext, builder);
-		    Set<String> pkgs = new HashSet<String>();
+		    Set<String> paths = new HashSet<String>();
 		    List<Map<String,Object>> xmlDataList = new ArrayList<Map<String,Object>>();
 		    List<Element> childElts = DomUtils.getChildElements(element);
 	        for (Element elt: childElts) {
 	            String localName = parserContext.getDelegate().getLocalName(elt);
-	            if (PKGS_ELEMENT.equals(localName)) {
+	            if (PATHS_ELEMENT.equals(localName)) {
 	                annotationScan = true;
-	                parsePkgsElement(elt, parserContext, pkgs);
+	                parsePkgsElement(elt, parserContext, paths);
 	            } else if (CLASS_ELEMENT.equals(localName)) {
 	                parseClassElement(elt, parserContext, xmlDataList);
 	            }
 	        }
 
-            builder.addPropertyValue("pkgs", pkgs);
+            builder.addPropertyValue("paths", paths);
             builder.addPropertyValue("annotationScan", annotationScan);
             builder.addPropertyValue("xmlDataList", xmlDataList);
             builder.addPropertyValue("beanAdapter", new SpringBeanAdapter());
@@ -161,7 +161,7 @@ public class ImtNamespaceHandler extends NamespaceHandlerSupport {
          * @param pkgs
          */
         private void parsePkgsElement(Element element, ParserContext parserContext, Set<String> pkgs) {
-            List<Element> pkgElts = DomUtils.getChildElementsByTagName(element, PKG_ELEMENT);
+            List<Element> pkgElts = DomUtils.getChildElementsByTagName(element, PATH_ELEMENT);
             for (Element pkgElt : pkgElts) {
                 String value = DomUtils.getTextValue(pkgElt).trim();
                 pkgs.add(value);

@@ -15,15 +15,15 @@
 	<xsd:element name="imt">
 		<xsd:annotation>
 			<xsd:documentation>
-				<![CDATA[A section (compartmentalization) of imt-specific configuration (including annotation-scan-pkgs, interface-class.).]]>
+				<![CDATA[A section (compartmentalization) of imt-specific configuration (including annotation-scan-paths, interface-class.).]]>
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="annotation-scan-pkgs" type="pkgType" minOccurs="0" maxOccurs="1">
+				<xsd:element name="annotation-scan-paths" type="pathType" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							<![CDATA[Annotation scan pkgs.]]>
+							<![CDATA[Annotation scan paths.]]>
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
@@ -47,9 +47,9 @@
 	</xsd:element>
 
 
-	<xsd:complexType name="pkgType">
+	<xsd:complexType name="pathType">
 		<xsd:sequence minOccurs="1" maxOccurs="unbounded">
-			<xsd:element name="pkg" type="xsd:string" nillable="false"/>
+			<xsd:element name="path" type="xsd:string" nillable="false"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

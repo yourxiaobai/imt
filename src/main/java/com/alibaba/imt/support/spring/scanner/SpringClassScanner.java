@@ -15,17 +15,9 @@
  */
 package com.alibaba.imt.support.spring.scanner;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -46,21 +38,21 @@ public class SpringClassScanner implements Scanner {
     private static final ResourcePatternResolver RESOLVER       = new PathMatchingResourcePatternResolver();
     private static final MetadataReaderFactory   READER_FACTORY = new SimpleMetadataReaderFactory();
     @Override
-    public Set<String> scan(Set<String> pkgs){
-        if(pkgs == null){
-            throw new IllegalArgumentException("The pkgs argument cannot be null!");
+    public Set<String> scan(Set<String> paths){
+        if(paths == null){
+            throw new IllegalArgumentException("The paths argument cannot be null!");
         }
         Set<String> allClassResourceSet = new HashSet<String>();
-        for(String pkgName : pkgs){
-            Set<String> classResourceSet = this.getClassInPackage(pkgName);
+        for(String path : paths){
+            Set<String> classResourceSet = this.getClassInPath(path);
             allClassResourceSet.addAll(classResourceSet);
            
         }
         return allClassResourceSet;
     }
     
-    private Set<String> getClassInPackage(String pkgName) {
-        String path = ClassUtils.convertClassNameToResourcePath(pkgName);
+    private Set<String> getClassInPath(String path) {
+        path = ClassUtils.convertClassNameToResourcePath(path);
         Set<String> ret = new HashSet<String>();
         Resource[] resources;
         try {

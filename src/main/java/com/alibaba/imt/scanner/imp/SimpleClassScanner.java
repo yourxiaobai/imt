@@ -35,22 +35,25 @@ import com.alibaba.imt.scanner.Scanner;
 public class SimpleClassScanner implements Scanner {
 
     @Override
-    public Set<String> scan(Set<String> pkgs){
-        if(pkgs == null){
-            throw new IllegalArgumentException("The pkgs argument cannot be null!");
+    public Set<String> scan(Set<String> paths){
+        if(paths == null){
+            throw new IllegalArgumentException("The paths argument cannot be null!");
         }
         Set<String> allClassResourceSet = new HashSet<String>();
-        for(String pkgName : pkgs){
-            Set<String> classResourceSet = this.getClassInPackage(pkgName);
+        for(String path : paths){
+            Set<String> classResourceSet = this.getClassInPath(path);
             allClassResourceSet.addAll(classResourceSet);
            
         }
         return allClassResourceSet;
     }
     
-    private Set<String> getClassInPackage(String pkgName) {
+    private Set<String> getClassInPath(String path) {
         Set<String> ret = new HashSet<String>();
-        String packagePath = pkgName.replace('.', '/') + "/";
+        String packagePath = path.replace('.', '/');
+        if(!packagePath.endsWith("/")){
+            packagePath +=  "/";
+        }
         try {
             List<File>  classPaths = getClassPath();
             for (File classPath : classPaths) {

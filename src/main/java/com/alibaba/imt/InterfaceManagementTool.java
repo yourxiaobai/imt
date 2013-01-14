@@ -28,7 +28,7 @@ import com.alibaba.imt.util.Util;
  *
  */
 public class InterfaceManagementTool{
-    private Set<String> pkgs;
+    private Set<String> paths;
     private BeanAdapter beanAdapter;
     private Scanner scanner;
     private Handler handler;
@@ -49,7 +49,7 @@ public class InterfaceManagementTool{
 	        if(scanner == null){
 	            scanner = new SimpleClassScanner();
 	        }
-	        Set<String> classResourceSet = scanner.scan(pkgs);
+	        Set<String> classResourceSet = scanner.scan(paths);
 	        if(handler == null){
 	            handler = new InterfaceHandler();
 	        }
@@ -243,13 +243,14 @@ public class InterfaceManagementTool{
         return arr;
     }
     
-    public Set<String> getPkgs() {
-        return pkgs;
+    public Set<String> getPaths() {
+        return paths;
     }
-    public void setPkgs(Set<String> pkgs) {
-        this.pkgs = pkgs;
+
+    public void setPaths(Set<String> paths) {
+        this.paths = paths;
     }
-    
+
     public BeanAdapter getBeanAdapter() {
         return beanAdapter;
     }
@@ -300,10 +301,10 @@ public class InterfaceManagementTool{
 
     public static void main( String[] args ){
 
-        Set<String> pkgs = new HashSet<String>();
-        pkgs.add("com.alibaba.imt");
+        Set<String> paths = new HashSet<String>();
+        paths.add("com.alibaba.imt");
         InterfaceManagementTool imt = new InterfaceManagementTool();
-        imt.setPkgs(pkgs);
+        imt.setPaths(paths);
         //imtb.setBeanAdapter(new RomaBeanAdapter());
         imt.init();
         List<InterfaceInfo> interfaceInfoList = imt.getInterfaceInfoList();
