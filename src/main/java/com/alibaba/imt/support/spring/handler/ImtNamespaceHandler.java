@@ -38,6 +38,7 @@ public class ImtNamespaceHandler extends NamespaceHandlerSupport {
 	private static final String INTERFACE_ELEMENT = "interface";
 	private static final String CLASS_NAME_ATTR = "className";
 	private static final String DESCRIPTION_ATTR = "description";
+	private static final String PRIVILEGE_ELEMENT = "privilege";
 
 
 	public void init() {
@@ -64,19 +65,35 @@ public class ImtNamespaceHandler extends NamespaceHandlerSupport {
 		    super.doParse(element, parserContext, builder);
 		    Set<String> paths = new HashSet<String>();
 		    List<Map<String,Object>> xmlDataList = new ArrayList<Map<String,Object>>();
-		    List<Element> childElts = DomUtils.getChildElements(element);
+		    String privilegeBean = null;
+		    /*List<Element> childElts = DomUtils.getChildElements(element);
 	        for (Element elt: childElts) {
 	            String localName = parserContext.getDelegate().getLocalName(elt);
 	            if (PATHS_ELEMENT.equals(localName)) {
 	                annotationScan = true;
-	                parsePkgsElement(elt, parserContext, paths);
+	                parsePathsElement(elt, parserContext, paths);
 	            } else if (CLASS_ELEMENT.equals(localName)) {
 	                parseClassElement(elt, parserContext, xmlDataList);
+	            } else if (PRIVILEGE_ELEMENT.equals(localName)) {
+	                privilegeBean = elt.getAttribute("ref");
 	            }
-	        }
+	        }*/
+		    Element pathsElement = DomUtils.getChildElementByTagName(element, PATHS_ELEMENT);
+		    if(pathsElement != null){
+		        parsePathsElement(pathsElement, parserContext, paths);
+		    }
+		    Element classElement = DomUtils.getChildElementByTagName(element, CLASS_ELEMENT);
+		    if(classElement != null){
+		        parseClassElement(classElement, parserContext, xmlDataList);
+		    }
+		    Element privilegeElement = DomUtils.getChildElementByTagName(element, PRIVILEGE_ELEMENT);
+		    if(privilegeElement != null){
+		        privilegeBean = privilegeElement.getAttribute("ref");
+		        builder.addPropertyReference("imtPrivilege", privilegeBean);
+		    }
 
-            builder.addPropertyValue("paths", paths);
             builder.addPropertyValue("annotationScan", annotationScan);
+            builder.addPropertyValue("paths", paths);
             builder.addPropertyValue("xmlDataList", xmlDataList);
             builder.addPropertyValue("beanAdapter", new SpringBeanAdapter());
             builder.addPropertyValue("scanner", new SpringClassScanner());
@@ -160,7 +177,7 @@ public class ImtNamespaceHandler extends NamespaceHandlerSupport {
          * @param parserContext
          * @param pkgs
          */
-        private void parsePkgsElement(Element element, ParserContext parserContext, Set<String> pkgs) {
+        private void parsePathsElement(Element element, ParserContext parserContext, Set<String> pkgs) {
             List<Element> pkgElts = DomUtils.getChildElementsByTagName(element, PATH_ELEMENT);
             for (Element pkgElt : pkgElts) {
                 String value = DomUtils.getTextValue(pkgElt).trim();

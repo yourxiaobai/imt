@@ -2,7 +2,7 @@
  * Project: imt
  * 
  * File Created at 2012-9-17
- * $Id: InterfaceInfo.java 21 2012-11-07 07:29:03Z yourxiaobai@gmail.com $
+ * $Id: InterfaceInfo.java 470757 2013-01-23 03:38:56Z admin.for.perth $
  * 
  * Copyright 1999-2100 Alibaba.com Corporation Limited.
  * All rights reserved.

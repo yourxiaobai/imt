@@ -35,8 +35,6 @@ public class ImtPageGen {
 		
 		String result = null;
 		if (null == trimToNull(imtWebContext.getKey())) {
-			//验证权限
-			authUser(imtWebContext);
 			//初始化页面
 			initData(imtWebContext);
 			result = merge(imtWebContext);
@@ -75,6 +73,14 @@ public class ImtPageGen {
 	}
 	
 	private static void initData(ImtWebContext imtWebContext) {
+		imtWebContext.put("url", imtWebContext.getUrl());
+		imtWebContext.put("encoding", imtWebContext.getEncoding());
+		
+		//验证权限
+		if(!authUser(imtWebContext)) {
+			return;
+		}
+		
 		List<ImtGroup> groups = new ArrayList<ImtGroup>();
 		InterfaceManagementTool tool = imtWebContext.getInterfaceManagementTool();
 		List<InterfaceInfo> interfaceInfos = tool.getInterfaceInfoList();
@@ -108,30 +114,24 @@ public class ImtPageGen {
 		
 		imtWebContext.put("groups", groups);
 		imtWebContext.put("items", tool.getInterfaceInfoList());
-		imtWebContext.put("url", imtWebContext.getUrl());
-		imtWebContext.put("encoding", imtWebContext.getEncoding());
-		imtWebContext.put("authed", imtWebContext.isAuthed());
+		
 	}
 
-	private static void authUser(ImtWebContext imtWebContext) {
-		WebApplicationContext webApplicationContext =  BeanUtils.findWebApplicationContext(imtWebContext.getServletContext(), imtWebContext.getContextAttribute());
+	private static boolean authUser(ImtWebContext imtWebContext) {
 		
-		List<ImtPrivilege> imtPrivileges = null;
-		if (null != webApplicationContext) {
-			imtPrivileges = BeanUtils.getBeanByType(ImtPrivilege.class, webApplicationContext);
+		ImtPrivilege imtPrivilege = imtWebContext.getInterfaceManagementTool().getImtPrivilege();
+		
+		boolean authed = true;
+		
+		if (null != imtPrivilege) {
+			authed = imtPrivilege.authUser();
+		} else { 
+			//默认不校验
 		}
 		
-		if (null == imtPrivileges) {
-			throw new RuntimeException("ImtPrivilege,目前仅支持基于spring的配置，请耐心等候!");
-		}
+		imtWebContext.put("authed", authed);
 		
-		for (ImtPrivilege privilege : imtPrivileges) {
-			if (privilege.authUser()) {
-				imtWebContext.setAuthed(true);
-				break;
-			}
-		}
-		
+		return authed;
 	}
 	
 	private static void initInterfaceManagementTool(ImtWebContext imtWebContext) {

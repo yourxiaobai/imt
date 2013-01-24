@@ -5,13 +5,13 @@
 	http://repo.alibaba-inc.com/schema/imt
 	http://repo.alibaba-inc.com/schema/imt/imt.xsd">
 	
-	<imt:imt id="interfaceManagementTool" remoteManage="true" key="acrm" remoteIp="0.0.0.0" remotePort="80" loginName="tester" loginPassword="1234">
-		<imt:annotation-scan-pkgs >
-			<imt:pkg></imt:pkg>
-			<imt:pkg></imt:pkg>
-			<imt:pkg></imt:pkg>
-			<imt:pkg></imt:pkg>
-		</imt:annotation-scan-pkgs>
+	<imt:imt id="interfaceManagementTool" remoteManage="true" key="acrm" remoteIp="0.0.0.0" remotePort="80" loginName="tester" loginPassword="1234" >
+		<imt:annotation-scan-paths >
+			<imt:path></imt:path>
+			<imt:path></imt:path>
+			<imt:path></imt:path>
+			<imt:path></imt:path>
+		</imt:annotation-scan-paths>
 		<imt:interface-class className="com.alibaba.xxx.SomeClass">
 			<imt:interface description="someMethod(int,java.lang.String)">
 				<imt:data>方法描述</imt:data>

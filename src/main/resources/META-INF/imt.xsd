@@ -20,6 +20,13 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="privilege" type="privilegeType" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[Set a privilege check class object for imt.]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="annotation-scan-paths" type="pathType" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -46,6 +53,10 @@
 		</xsd:complexType>
 	</xsd:element>
 
+
+	<xsd:complexType name="privilegeType">
+		<xsd:attribute name="ref" type="xsd:string" use="required"/>
+	</xsd:complexType>
 
 	<xsd:complexType name="pathType">
 		<xsd:sequence minOccurs="1" maxOccurs="unbounded">

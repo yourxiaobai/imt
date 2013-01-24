@@ -15,6 +15,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.imt.adapter.BeanAdapter;
+import com.alibaba.imt.adapter.privileges.ImtPrivilege;
 import com.alibaba.imt.bean.CheckResult;
 import com.alibaba.imt.bean.InterfaceInfo;
 import com.alibaba.imt.handler.Handler;
@@ -38,6 +39,7 @@ public class InterfaceManagementTool{
     private Map<String, InterfaceInfo> interfaceInfoMap = null;
     private boolean remoteManage = false;
     private boolean annotationScan = false;
+    private ImtPrivilege imtPrivilege;
    
     public void init(){
     	try{
@@ -297,6 +299,14 @@ public class InterfaceManagementTool{
 
     public void setHandler(Handler handler) {
         this.handler = handler;
+    }
+    
+    public ImtPrivilege getImtPrivilege() {
+        return imtPrivilege;
+    }
+
+    public void setImtPrivilege(ImtPrivilege imtPrivilege) {
+        this.imtPrivilege = imtPrivilege;
     }
 
     public static void main( String[] args ){
