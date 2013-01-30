@@ -50,6 +50,7 @@ public class ImtPageGen {
 			imtWebContext.setHtmlContentType();
 			imtWebContext.render(result);
 		} else if (isJsResource(imtWebContext)) {
+			//加载js文件
 			imtWebContext.setJavaScriptContentType();
 			renderJsResource(imtWebContext);
 		} else {
