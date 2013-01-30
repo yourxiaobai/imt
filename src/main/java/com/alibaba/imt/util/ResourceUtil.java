@@ -6,12 +6,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 
+import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.resource.Resource;
+import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.imt.web.ImtPageGen;
 import com.alibaba.imt.web.ImtWebContext;
-import com.alibaba.imt.web.ImtPageGen.ImtResourceLoader;
 
 /*
  * 资源加载工具
@@ -33,7 +37,14 @@ public class ResourceUtil {
 		return imtWebContext.getUrl().indexOf("/img") > 0;
 	}
 	
+	public static void renderPage(ImtWebContext imtWebContext) throws IOException {
+		imtWebContext.setHtmlContentType();
+		imtWebContext.render(merge(imtWebContext, "/vm/page.vm"));
+	}
+	
 	public static void renderJsResource(ImtWebContext imtWebContext) throws IOException {
+		imtWebContext.setJavaScriptContentType();
+		
 		int pos = imtWebContext.getUrl().indexOf("/js");
 		String path = imtWebContext.getUrl().substring(pos);
 		
@@ -63,6 +74,12 @@ public class ResourceUtil {
 		}
 	}
 	
+	public static void renderMethodInvoke(ImtWebContext imtWebContext) throws IOException {
+		imtWebContext.setHtmlContentType();
+		Object ret = imtWebContext.getInterfaceManagementTool().invoke(imtWebContext.getKey(), imtWebContext.getAdditionalData(), imtWebContext.getArgs());
+		imtWebContext.render(JSON.toJSONString(ret));
+	}
+	
 	public static void renderImgResource(ImtWebContext imtWebContext) throws IOException {
 		int pos = imtWebContext.getUrl().indexOf("/img");
 		String path = imtWebContext.getUrl().substring(pos);
@@ -85,6 +102,8 @@ public class ResourceUtil {
 	}
 	
 	public static void renderCssResource(ImtWebContext context) throws IOException {
+		context.setCssContentType();
+		
 		int pos = context.getUrl().indexOf("/css");
 		String path = context.getUrl().substring(pos);
 		context.put("url", context.getUrl().substring(0, pos));
@@ -111,6 +130,28 @@ public class ResourceUtil {
 			return writer.toString();
 		} catch (Exception e) {
 			throw new RuntimeException("渲染模版出错," , e);
+		}
+	}
+	
+	public static class ImtResourceLoader extends ResourceLoader {
+
+		@Override
+		public void init(ExtendedProperties configuration) {
+		}
+
+		@Override
+		public InputStream getResourceStream(String source) throws ResourceNotFoundException {
+			return getClass().getResourceAsStream(source);
+		}
+
+		@Override
+		public boolean isSourceModified(Resource resource) {
+			return false;
+		}
+
+		@Override
+		public long getLastModified(Resource resource) {
+			return 0;
 		}
 	}
 }

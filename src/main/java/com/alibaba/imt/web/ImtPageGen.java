@@ -36,27 +36,18 @@ public class ImtPageGen {
 	public static void process(ImtWebContext imtWebContext) throws IOException {
 		initInterfaceManagementTool(imtWebContext);
 		
-		String result = null;
 		if (!isResource(imtWebContext) && null == trimToNull(imtWebContext.getKey())) {
 			//初始化页面
 			initData(imtWebContext);
-			result = merge(imtWebContext, "/vm/page.vm");
-			imtWebContext.setHtmlContentType();
-			imtWebContext.render(result);
+			renderPage(imtWebContext);
 		} else if (null != imtWebContext.getAdditionalData()){
 			//调方法
-			Object ret = imtWebContext.getInterfaceManagementTool().invoke(imtWebContext.getKey(), imtWebContext.getAdditionalData(), imtWebContext.getArgs());
-			result = JSON.toJSONString(ret);
-			//imtWebContext.setJsonContentType();
-			imtWebContext.setHtmlContentType();
-			imtWebContext.render(result);
+			renderMethodInvoke(imtWebContext);
 		} else if (isJsResource(imtWebContext)) {
 			//加载js文件
-			imtWebContext.setJavaScriptContentType();
 			renderJsResource(imtWebContext);
 		} else if (isCssResource(imtWebContext)) {
 			//加载css文件
-			imtWebContext.setCssContentType();
 			renderCssResource(imtWebContext);
 		} else if (isImgResource(imtWebContext)) {
 			//加载图片
@@ -148,28 +139,6 @@ public class ImtPageGen {
 		}
 		
 		imtWebContext.setInterfaceManagementTool(interfaceManagementTool);
-	}
-	
-	public static class ImtResourceLoader extends ResourceLoader {
-
-		@Override
-		public void init(ExtendedProperties configuration) {
-		}
-
-		@Override
-		public InputStream getResourceStream(String source) throws ResourceNotFoundException {
-			return getClass().getResourceAsStream(source);
-		}
-
-		@Override
-		public boolean isSourceModified(Resource resource) {
-			return false;
-		}
-
-		@Override
-		public long getLastModified(Resource resource) {
-			return 0;
-		}
 	}
 	
 	public static class ImtGroup {
