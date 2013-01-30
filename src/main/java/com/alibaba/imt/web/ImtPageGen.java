@@ -1,6 +1,7 @@
 package com.alibaba.imt.web;
 
 import static com.alibaba.imt.util.StringUtil.trimToNull;
+import static com.alibaba.imt.util.ResourceUtil.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,10 +37,10 @@ public class ImtPageGen {
 		initInterfaceManagementTool(imtWebContext);
 		
 		String result = null;
-		if (!isJsResource(imtWebContext) && null == trimToNull(imtWebContext.getKey())) {
+		if (!isResource(imtWebContext) && null == trimToNull(imtWebContext.getKey())) {
 			//初始化页面
 			initData(imtWebContext);
-			result = merge(imtWebContext);
+			result = merge(imtWebContext, "/vm/page.vm");
 			imtWebContext.setHtmlContentType();
 			imtWebContext.render(result);
 		} else if (null != imtWebContext.getAdditionalData()){
@@ -53,64 +54,16 @@ public class ImtPageGen {
 			//加载js文件
 			imtWebContext.setJavaScriptContentType();
 			renderJsResource(imtWebContext);
-		} else {
+		} else if (isCssResource(imtWebContext)) {
+			//加载css文件
+			imtWebContext.setCssContentType();
+			renderCssResource(imtWebContext);
+		} else if (isImgResource(imtWebContext)) {
+			//加载图片
+			renderImgResource(imtWebContext);
+		}
+		else {
 			throw new RuntimeException("参数错误:" + imtWebContext);
-		}
-	}
-	
-	private static void renderJsResource(ImtWebContext imtWebContext) {
-		int pos = imtWebContext.getUrl().indexOf("/js");
-		String path = imtWebContext.getUrl().substring(pos);
-		
-		InputStream is = null;
-		BufferedReader in = null;
-	    try {
-	    	is = ImtPageGen.class.getResourceAsStream(path);
-	    	in = new BufferedReader(new InputStreamReader(is));
-	    	
-	    	String line = "";
-			while ((line = in.readLine()) != null){
-				imtWebContext.render(line);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (null != is) {
-				try {
-					is.close();
-				} catch (IOException e) {
-				}
-			}
-			if (null != in) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-	}
-	private static boolean isJsResource(ImtWebContext imtWebContext) {
-		return imtWebContext.getUrl().indexOf("/js") > 0;
-	}
-	
-	private static String merge(ImtWebContext context) {
-		try {
-			VelocityEngine ve = new VelocityEngine();
-			ve.setProperty("resource.loader", "imt");
-			ve.setProperty("imt.resource.loader.class", ImtResourceLoader.class.getName());
-			ve.setProperty("input.encoding", "UTF-8");
-			ve.setProperty("output.encoding", context.getEncoding());
-
-			ve.init();
-			
-			Template template = ve.getTemplate("page.vm", context.getEncoding());
-			
-			StringWriter writer = new StringWriter();
-			template.merge(context, writer);
-			
-			return writer.toString();
-		} catch (Exception e) {
-			throw new RuntimeException("渲染模版出错," , e);
 		}
 	}
 	

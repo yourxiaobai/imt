@@ -63,6 +63,10 @@ public class ImtWebContext extends VelocityContext{
 		response.setContentType("text/javascript;charset=" + getEncoding());
 	}
 	
+	public void setCssContentType() {
+		response.setContentType("text/css;charset=" + getEncoding());
+	}
+	
 	public void setJsonContentType() {
 		response.setContentType("application/json;charset=" + getEncoding());
 	}
