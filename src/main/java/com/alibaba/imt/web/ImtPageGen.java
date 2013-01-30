@@ -2,8 +2,10 @@ package com.alibaba.imt.web;
 
 import static com.alibaba.imt.util.StringUtil.trimToNull;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,21 +36,62 @@ public class ImtPageGen {
 		initInterfaceManagementTool(imtWebContext);
 		
 		String result = null;
-		if (null == trimToNull(imtWebContext.getKey())) {
+		if (!isJsResource(imtWebContext) && null == trimToNull(imtWebContext.getKey())) {
 			//初始化页面
 			initData(imtWebContext);
 			result = merge(imtWebContext);
-			//imtWebContext.setHtmlContentType();
+			imtWebContext.setHtmlContentType();
+			imtWebContext.render(result);
 		} else if (null != imtWebContext.getAdditionalData()){
 			//调方法
 			Object ret = imtWebContext.getInterfaceManagementTool().invoke(imtWebContext.getKey(), imtWebContext.getAdditionalData(), imtWebContext.getArgs());
 			result = JSON.toJSONString(ret);
 			//imtWebContext.setJsonContentType();
+			imtWebContext.setHtmlContentType();
+			imtWebContext.render(result);
+		} else if (isJsResource(imtWebContext)) {
+			imtWebContext.setJavaScriptContentType();
+			renderJsResource(imtWebContext);
 		} else {
 			throw new RuntimeException("参数错误:" + imtWebContext);
 		}
-		imtWebContext.setHtmlContentType();
+		
 		imtWebContext.render(result);
+	}
+	
+	private static void renderJsResource(ImtWebContext imtWebContext) {
+		int pos = imtWebContext.getUrl().indexOf("/js");
+		String path = imtWebContext.getUrl().substring(pos);
+		
+		InputStream is = null;
+		BufferedReader in = null;
+	    try {
+	    	is = ImtPageGen.class.getResourceAsStream(path);
+	    	in = new BufferedReader(new InputStreamReader(is));
+	    	
+	    	String line = "";
+			while ((line = in.readLine()) != null){
+				imtWebContext.render(line);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (null != is) {
+				try {
+					is.close();
+				} catch (IOException e) {
+				}
+			}
+			if (null != in) {
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+	private static boolean isJsResource(ImtWebContext imtWebContext) {
+		return imtWebContext.getUrl().indexOf("/js") > 0;
 	}
 	
 	private static String merge(ImtWebContext context) {

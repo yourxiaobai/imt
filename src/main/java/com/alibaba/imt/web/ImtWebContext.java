@@ -52,11 +52,15 @@ public class ImtWebContext extends VelocityContext{
 	}
 
 	public void render(String content) throws IOException {
-		response.getWriter().print(content);
+		response.getWriter().println(content);
 	}
 	
 	public void setHtmlContentType() {
 		response.setContentType("text/html;charset=" + getEncoding());
+	}
+	
+	public void setJavaScriptContentType() {
+		response.setContentType("text/javascript;charset=" + getEncoding());
 	}
 	
 	public void setJsonContentType() {
