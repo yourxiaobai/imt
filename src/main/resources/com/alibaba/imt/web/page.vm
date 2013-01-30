@@ -30,7 +30,7 @@
 				#end 
 			</select>
 		#end
-		<a class="cc-btn22-grey" href="javascript:refreshFn();">刷新</a>
+		<!--<a class="cc-btn22-grey" href="javascript:refreshFn();">刷新</a>-->
 	</fieldset>
 
 	<br/>
@@ -82,7 +82,7 @@
 							</td>
 							<td>
 								<input type="hidden" name="key" value="$!item.key"/>
-								<a class="imt-invoke" formId="form_${nextGroup.uuid}_$velocityCount">调用</a>
+								<input type="button" class="imt-invoke" formId="form_${nextGroup.uuid}_$velocityCount" value="调用"/>
 							</td>
 						</tr>
 						</form>
