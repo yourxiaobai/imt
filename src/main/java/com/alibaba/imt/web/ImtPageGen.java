@@ -56,8 +56,6 @@ public class ImtPageGen {
 		} else {
 			throw new RuntimeException("参数错误:" + imtWebContext);
 		}
-		
-		imtWebContext.render(result);
 	}
 	
 	private static void renderJsResource(ImtWebContext imtWebContext) {
