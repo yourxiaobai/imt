@@ -1,26 +1,14 @@
 package com.alibaba.imt.web;
 
-import static com.alibaba.imt.util.StringUtil.trimToNull;
 import static com.alibaba.imt.util.ResourceUtil.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.collections.ExtendedProperties;
-import org.apache.velocity.Template;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.resource.Resource;
-import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.imt.InterfaceManagementTool;
 import com.alibaba.imt.adapter.privileges.ImtPrivilege;
 import com.alibaba.imt.bean.InterfaceInfo;
@@ -36,11 +24,11 @@ public class ImtPageGen {
 	public static void process(ImtWebContext imtWebContext) throws IOException {
 		initInterfaceManagementTool(imtWebContext);
 		
-		if (!isResource(imtWebContext) && null == trimToNull(imtWebContext.getKey())) {
+		if (isInitPage(imtWebContext)) {
 			//初始化页面
 			initData(imtWebContext);
 			renderPage(imtWebContext);
-		} else if (null != imtWebContext.getAdditionalData()){
+		} else if (isMethodInvoke(imtWebContext)){
 			//调方法
 			renderMethodInvoke(imtWebContext);
 		} else if (isJsResource(imtWebContext)) {

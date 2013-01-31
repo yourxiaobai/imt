@@ -1,5 +1,7 @@
 package com.alibaba.imt.util;
 
+import static com.alibaba.imt.util.StringUtil.trimToNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +23,14 @@ import com.alibaba.imt.web.ImtWebContext;
  * 资源加载工具
  */
 public class ResourceUtil {
+	public static boolean isInitPage(ImtWebContext imtWebContext) {
+		return !isResource(imtWebContext) && null == trimToNull(imtWebContext.getKey());
+	}
+	
+	public static boolean isMethodInvoke(ImtWebContext imtWebContext) {
+		return null != imtWebContext.getAdditionalData();
+	}
+	
 	public static boolean isResource(ImtWebContext imtWebContext) {
 		return isCssResource(imtWebContext) || isJsResource(imtWebContext) || isImgResource(imtWebContext);
 	}

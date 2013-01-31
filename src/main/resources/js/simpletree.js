@@ -1,57 +1,34 @@
-/*
-Author£ºÕÅºÆ»ª
-Date£º2011.11.27 0:33
-Version£ºSimpleTree 1.1
-*/
-
 $(function(){
 	$.fn.extend({
 		SimpleTree:function(options){
 			
-			//³õÊ¼»¯²ÎÊı
 			var option = $.extend({
 				click:function(a){ }
 			},options);
 			
-			option.tree=this;	/* ÔÚ²ÎÊı¶ÔÏóÖĞÌí¼Ó¶Ôµ±Ç°²Ëµ¥Ê÷µÄÒıÓÃ£¬ÒÔ±ãÔÚ¶ÔÏóÖĞÊ¹ÓÃ¸Ã²Ëµ¥Ê÷ */
+			option.tree=this;	
 			
 			option._init=function(){
-				/*
-				 * ³õÊ¼»¯²Ëµ¥Õ¹¿ª×´Ì¬£¬ÒÔ¼°·Ö²æ½ÚµãµÄÑùÊ½
-				 */				
-				this.tree.find("ul ul").hide();	/* Òş²ØËùÓĞ×Ó¼¶²Ëµ¥ */
-				this.tree.find("ul ul").prev("li").removeClass("open");	/* ÒÆ³ıËùÓĞ×Ó¼¶²Ëµ¥¸¸½ÚµãµÄ open ÑùÊ½ */
+				this.tree.find("ul ul").hide();	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ëµï¿½ */
+				this.tree.find("ul ul").prev("li").removeClass("open");	/* ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ open ï¿½ï¿½Ê½ */
 				
-				this.tree.find("ul ul[show='true']").show();	/* ÏÔÊ¾ show ÊôĞÔÎª true µÄ×Ó¼¶²Ëµ¥ */
-				this.tree.find("ul ul[show='true']").prev("li").addClass("open");	/* Ìí¼Ó show ÊôĞÔÎª true µÄ×Ó¼¶²Ëµ¥¸¸½ÚµãµÄ open ÑùÊ½ */
+				this.tree.find("ul ul[show='true']").show();	/* ï¿½ï¿½Ê¾ show ï¿½ï¿½ï¿½ï¿½Îª true ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ëµï¿½ */
+				this.tree.find("ul ul[show='true']").prev("li").addClass("open");	/* ï¿½ï¿½ï¿½ show ï¿½ï¿½ï¿½ï¿½Îª true ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ open ï¿½ï¿½Ê½ */
 			}/* option._init() End */
 			
-			/* ÉèÖÃËùÓĞ³¬Á´½Ó²»ÏìÓ¦µ¥»÷ÊÂ¼ş */
 			this.find("a").click(function(){ $(this).parents("li").click(); return false; });
 			
-			/* ²Ëµ¥Ïî <li> ½ÓÊÜµ¥»÷ */
 			this.find("li").click(function(){
-				/*
-				 * µ±µ¥»÷²Ëµ¥Ïî <li>
-				 * 1.´¥·¢ÓÃ»§×Ô¶¨ÒåµÄµ¥»÷ÊÂ¼ş£¬½«¸Ã <li> ±êÇ©ÖĞµÄµÚÒ»¸ö³¬Á´½Ó×öÎª²ÎÊı´«µİ¹ıÈ¥
-				 * 2.ĞŞ¸Äµ±Ç°²Ëµ¥ÏîËùÊôµÄ×Ó²Ëµ¥µÄÏÔÊ¾×´Ì¬£¨Èç¹ûµÈÓÚ true ½«ÆäÉèÖÃÎª false£¬·ñÔò½«ÆäÉèÖÃÎª true£©
-				 * 3.ÖØĞÂ³õÊ¼»¯²Ëµ¥
-				 */
 				var a=$(this).find("a")[0];
 				if(typeof(a)!="undefined")
-					option.click(a);	/* Èç¹û»ñÈ¡µÄ³¬Á´½Ó²»ÊÇ undefined£¬Ôò´¥·¢µ¥»÷ */
+					option.click(a);	/* ï¿½ï¿½ï¿½ï¿½È¡ï¿½Ä³ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ undefinedï¿½ï¿½ï¿½ò´¥·ï¿½ï¿½ï¿½ï¿½ï¿½ */
 				
-				/* 
-				 * Èç¹ûµ±Ç°½ÚµãÏÂÃæ°üº¬×Ó²Ëµ¥£¬²¢ÇÒÆä show ÊôĞÔµÄÖµÎª true£¬ÔòĞŞ¸ÄÆä show ÊôĞÔÎª false
-				 * ·ñÔòĞŞ¸ÄÆä show ÊôĞÔÎª true
-				 */
 				if($(this).next("ul").attr("show")=="true"){
 					$(this).next("ul").attr("show","false");					
 				}else{
 					$(this).next("ul").attr("show","true");
 				}
 				
-				/* ³õÊ¼»¯²Ëµ¥ */
 				option._init();
 			});
 			
@@ -64,14 +41,11 @@ $(function(){
 				}
 			);
 			
-			/* ÉèÖÃËùÓĞ¸¸½ÚµãÑùÊ½ */
 			this.find("ul").prev("li").addClass("folder");
 			
-			/* ÉèÖÃ½Úµã¡°ÊÇ·ñ°üº¬×Ó½Úµã¡±ÊôĞÔ */
 			this.find("li").find("a").attr("hasChild",false);
 			this.find("ul").prev("li").find("a").attr("hasChild",true);
 			
-			/* ³õÊ¼»¯²Ëµ¥ */
 			option._init();
 			
 		}/* SimpleTree Function End */
