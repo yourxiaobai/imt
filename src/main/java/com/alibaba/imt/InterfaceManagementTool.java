@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.imt.adapter.BeanAdapter;
 import com.alibaba.imt.adapter.privileges.ImtPrivilege;
 import com.alibaba.imt.bean.CheckResult;
+import com.alibaba.imt.bean.ImtInfo;
 import com.alibaba.imt.bean.InterfaceInfo;
 import com.alibaba.imt.handler.Handler;
 import com.alibaba.imt.handler.imp.InterfaceHandler;
@@ -83,6 +84,10 @@ public class InterfaceManagementTool{
                 data.put("additionalDatas", additionalDatas);
             }
             InterfaceInfo ii = Util.mapToBean(data, InterfaceInfo.class);
+            ImtInfo imtInfo = Util.mapToBean(data, ImtInfo.class);
+            if (null != ii && null != imtInfo) {
+            	ii.setImtInfo(imtInfo);
+            }
             interfaceInfoList.add(ii);
             interfaceInfoMap.put(ii.getKey(), ii);
         }

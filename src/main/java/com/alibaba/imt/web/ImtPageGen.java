@@ -1,6 +1,16 @@
 package com.alibaba.imt.web;
 
-import static com.alibaba.imt.util.ResourceUtil.*;
+import static com.alibaba.imt.util.ResourceUtil.isCssResource;
+import static com.alibaba.imt.util.ResourceUtil.isImgResource;
+import static com.alibaba.imt.util.ResourceUtil.isInitPage;
+import static com.alibaba.imt.util.ResourceUtil.isJsResource;
+import static com.alibaba.imt.util.ResourceUtil.isMethodInvoke;
+import static com.alibaba.imt.util.ResourceUtil.renderCssResource;
+import static com.alibaba.imt.util.ResourceUtil.renderImgResource;
+import static com.alibaba.imt.util.ResourceUtil.renderJsResource;
+import static com.alibaba.imt.util.ResourceUtil.renderMethodInvoke;
+import static com.alibaba.imt.util.ResourceUtil.renderPage;
+import static com.alibaba.imt.util.StringUtil.trimToNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.imt.InterfaceManagementTool;
 import com.alibaba.imt.adapter.privileges.ImtPrivilege;
+import com.alibaba.imt.bean.ImtInfo;
 import com.alibaba.imt.bean.InterfaceInfo;
 import com.alibaba.imt.support.spring.BeanUtils;
 
@@ -40,8 +51,7 @@ public class ImtPageGen {
 		} else if (isImgResource(imtWebContext)) {
 			//加载图片
 			renderImgResource(imtWebContext);
-		}
-		else {
+		} else {
 			throw new RuntimeException("参数错误:" + imtWebContext);
 		}
 	}
@@ -60,7 +70,41 @@ public class ImtPageGen {
 		List<InterfaceInfo> interfaceInfos = tool.getInterfaceInfoList();
 		for (InterfaceInfo info : interfaceInfos) {
 			String[] datas = info.getDatas();
-			if (datas.length >= 3) {
+			if (null != info.getImtInfo() && null != trimToNull(info.getImtInfo().getMehtodDescrption())) {
+				ImtInfo imtInfo = info.getImtInfo();
+				String[] groupsArray = imtInfo.getGroup();
+				ImtGroup imtGroup = null;
+				if (null != groupsArray && groupsArray.length > 0) {
+					imtGroup = new ImtGroup(groupsArray[0]);
+					
+					int index = groups.indexOf(imtGroup);
+					if (index != -1) {
+						imtGroup =  groups.get(index);
+					} else {
+						groups.add(imtGroup);
+					}
+					
+					ImtGroup previous = imtGroup;
+					for (int i = 1; i < groupsArray.length; i++) {
+						ImtGroup nextGroup = previous.getNextGroupByName(groupsArray[i]);
+						if (null == nextGroup) {
+							nextGroup = new ImtGroup(groupsArray[i]);
+							previous.addNext(nextGroup);
+						} 
+						previous = nextGroup;
+					}
+				} else {
+					imtGroup = new ImtGroup(imtInfo.getMehtodDescrption());
+					int index = groups.indexOf(imtGroup);
+					if (index != -1) {
+						imtGroup =  groups.get(index);
+					} else {
+						groups.add(imtGroup);
+					}
+				}
+				
+			} else if (null != datas && datas.length >= 3) {
+				//老注解以数组形式
 				ImtGroup group = new ImtGroup(datas[2]);
 				int index = groups.indexOf(group);
 				if (index != -1) {
@@ -213,6 +257,11 @@ public class ImtPageGen {
 			} else if (!name.equals(other.name))
 				return false;
 			return true;
+		}
+		
+		@Override
+		public String toString() {
+			return name;
 		}
 	}
 }

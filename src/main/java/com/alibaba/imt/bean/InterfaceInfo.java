@@ -42,6 +42,7 @@ public class InterfaceInfo {
     
     private Object[] additionalDatas;
 
+    private ImtInfo imtInfo;
     
     public String getKey() {
         return key;
@@ -122,5 +123,13 @@ public class InterfaceInfo {
     public void setAdditionalDatas(Object... additionalDatas) {
         this.additionalDatas = additionalDatas;
     }
+
+	public ImtInfo getImtInfo() {
+		return imtInfo;
+	}
+
+	public void setImtInfo(ImtInfo imtInfo) {
+		this.imtInfo = imtInfo;
+	}
 
 }

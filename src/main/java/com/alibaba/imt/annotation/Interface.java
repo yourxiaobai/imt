@@ -27,5 +27,18 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Interface {
+	/**
+	 * @Interface(datas = { 
+	 * 		"data mi test",    		方法描述
+	 * 		"product",				是否线上
+	 * 		"Data Migration",   	分组一
+	 * 		"correct trade data",	分组二
+	 * 		"param1" 				第一个参数
+	 * 		"param2"				第二个参数
+	 * 		...						参数可以无限个						
+	 * 	})
+	 * 
+	 *  老注解方式
+	 */
 	String[] datas();
 }

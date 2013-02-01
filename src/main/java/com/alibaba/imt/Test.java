@@ -15,6 +15,7 @@
  */
 package com.alibaba.imt;
 
+import com.alibaba.imt.annotation.Imt;
 import com.alibaba.imt.annotation.Interface;
 
 /**
@@ -32,6 +33,11 @@ public class Test {
     public String testMethod2(int i, String s){
         System.out.println("this is testMethod " + i + "the string is " + s);
         return s;
+    }
+    
+    //@Imt()
+    public String testMethod3(int i) {
+    	return "";
     }
     
     public static void main(String[] args){

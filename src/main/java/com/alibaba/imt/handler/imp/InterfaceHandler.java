@@ -29,6 +29,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import com.alibaba.imt.annotation.Imt;
 import com.alibaba.imt.annotation.Interface;
 import com.alibaba.imt.handler.Handler;
 import com.alibaba.imt.util.Util;
@@ -96,7 +97,8 @@ public class InterfaceHandler extends ClassVisitor implements Handler,Opcodes {
         @Override
         public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
             InterfaceAnnotationVisitor iav = null;
-            if(Type.getDescriptor(Interface.class).equals(desc)){
+            if(Type.getDescriptor(Interface.class).equals(desc)||
+            		Type.getDescriptor(Imt.class).equals(desc)){
                 
                 dataMap = new HashMap<String, Object>();
                 Class<?> clazz = null;
