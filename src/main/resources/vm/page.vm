@@ -12,7 +12,7 @@
 #macro(renderMenu $groups)
 	<ul>
 	#foreach($group in $groups)
-		<li><a href="#" ref="xtgl">$group.name</a></li>
+		<li><a href="#" uuid="$group.uuid">$group.name</a></li>
 		#if($group.nexts)
 			#renderMenu($group.nexts)
 		#end
@@ -133,8 +133,15 @@ jQuery(function($) {
 	
 	$(".st_tree").SimpleTree({
 		click:function(a){
-			if(!$(a).attr("hasChild"))
-				alert($(a).attr("ref"));
+			if(!$(a).attr("hasChild")) {
+				$["ajax"]({
+					url: "$url/uuid/" + $(a).attr("uuid"),
+					success: function(result) {
+						alert("success");
+						alert(result);
+					}
+				});
+			}
 		}
 	});
 });

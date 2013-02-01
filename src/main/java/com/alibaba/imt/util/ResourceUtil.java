@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.List;
 
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.Template;
@@ -16,15 +17,22 @@ import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.imt.bean.ImtGroup;
 import com.alibaba.imt.web.ImtPageGen;
 import com.alibaba.imt.web.ImtWebContext;
 
-/*
+/**
  * 资源加载工具
+ * @author hongwei.quhw
+ *
  */
 public class ResourceUtil {
 	public static boolean isInitPage(ImtWebContext imtWebContext) {
-		return !isResource(imtWebContext) && null == trimToNull(imtWebContext.getKey());
+		return !isResource(imtWebContext) && !isContent(imtWebContext) && null == trimToNull(imtWebContext.getKey());
+	}
+	
+	public static boolean isContent(ImtWebContext imtWebContext) {
+		return imtWebContext.getUrl().indexOf("/uuid") > 0;
 	}
 	
 	public static boolean isMethodInvoke(ImtWebContext imtWebContext) {
@@ -50,6 +58,29 @@ public class ResourceUtil {
 	public static void renderPage(ImtWebContext imtWebContext) throws IOException {
 		imtWebContext.setHtmlContentType();
 		imtWebContext.render(merge(imtWebContext, "/vm/page.vm"));
+	}
+	
+	public static void renderContent(ImtWebContext imtWebContext) throws IOException {
+		int pos = imtWebContext.getUrl().indexOf("/uuid/");
+		String uuid = imtWebContext.getUrl().substring(pos + "/uuid/".length());
+		List<ImtGroup> imtGroups = imtWebContext.getInterfaceManagementTool().getImtGroups();
+		imtWebContext.render(JSON.toJSONString(getGroupByUuid(imtGroups, uuid).getInterfaceInfos()));
+	}
+	
+	private static ImtGroup getGroupByUuid(List<ImtGroup> imtGroups, String uuid) {
+		ImtGroup targetGroup = null;
+		for (ImtGroup imtGroup : imtGroups) {
+			if (uuid.equals(imtGroup.getUuid())) {
+				targetGroup = imtGroup;
+				break;
+			}
+			
+			if (null != imtGroup.getNexts()) {
+				targetGroup = getGroupByUuid(imtGroup.getNexts(), uuid);
+			}
+		}
+		
+		return targetGroup;
 	}
 	
 	public static void renderJsResource(ImtWebContext imtWebContext) throws IOException {

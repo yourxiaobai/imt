@@ -1,5 +1,7 @@
 package com.alibaba.imt;
 
+import static com.alibaba.imt.util.StringUtil.trimToNull;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -17,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.imt.adapter.BeanAdapter;
 import com.alibaba.imt.adapter.privileges.ImtPrivilege;
 import com.alibaba.imt.bean.CheckResult;
+import com.alibaba.imt.bean.ImtGroup;
 import com.alibaba.imt.bean.ImtInfo;
 import com.alibaba.imt.bean.InterfaceInfo;
 import com.alibaba.imt.handler.Handler;
@@ -41,6 +44,7 @@ public class InterfaceManagementTool{
     private boolean remoteManage = false;
     private boolean annotationScan = false;
     private ImtPrivilege imtPrivilege;
+    private List<ImtGroup> imtGroups;
    
     public void init(){
     	try{
@@ -91,6 +95,76 @@ public class InterfaceManagementTool{
             interfaceInfoList.add(ii);
             interfaceInfoMap.put(ii.getKey(), ii);
         }
+    }
+    
+    public void initGroups() {
+    	if (null == imtGroups) {
+    		imtGroups = new ArrayList<ImtGroup>();
+    		List<InterfaceInfo> interfaceInfos = getInterfaceInfoList();
+    		for (InterfaceInfo info : interfaceInfos) {
+    			String[] datas = info.getDatas();
+    			if (null != info.getImtInfo() && null != trimToNull(info.getImtInfo().getMehtodDescrption())) {
+    				ImtInfo imtInfo = info.getImtInfo();
+    				String[] groupsArray = imtInfo.getGroup();
+    				ImtGroup imtGroup = null;
+    				if (null != groupsArray && groupsArray.length > 0) {
+    					imtGroup = new ImtGroup(groupsArray[0]);
+    					
+    					int index = imtGroups.indexOf(imtGroup);
+    					if (index != -1) {
+    						imtGroup =  imtGroups.get(index);
+    					} else {
+    						imtGroups.add(imtGroup);
+    					}
+    					
+    					ImtGroup previous = imtGroup;
+    					for (int i = 1; i < groupsArray.length; i++) {
+    						ImtGroup nextGroup = previous.getNextGroupByName(groupsArray[i]);
+    						if (null == nextGroup) {
+    							nextGroup = new ImtGroup(groupsArray[i]);
+    							previous.addNext(nextGroup);
+    						} 
+    						previous = nextGroup;
+    					}
+    					
+    					previous.addInterfaceInfo(info);
+    				} else {
+    					imtGroup = new ImtGroup(imtInfo.getMehtodDescrption());
+    					int index = imtGroups.indexOf(imtGroup);
+    					if (index != -1) {
+    						imtGroup =  imtGroups.get(index);
+    					} else {
+    						imtGroups.add(imtGroup);
+    					}
+    					imtGroup.addInterfaceInfo(info);
+    				}
+    				
+    			} else if (null != datas && datas.length >= 3) {
+    				//老注解以数组形式
+    				ImtGroup group = new ImtGroup(datas[2]);
+    				int index = imtGroups.indexOf(group);
+    				if (index != -1) {
+    					group =  imtGroups.get(index);
+    				} else {
+    					imtGroups.add(group);
+    				}
+    				
+    				try {
+    					//next group 目前先支持二维
+    					ImtGroup nextGroup = group.getNextGroupByName(datas[3]);
+    					if (null == nextGroup) {
+    						nextGroup = new ImtGroup(datas[3]);
+    						group.addNext(nextGroup);
+    					} 
+    					
+    					nextGroup.addInterfaceInfo(info);
+    				} catch (IndexOutOfBoundsException e) {
+    					// 一维分组
+    					group.addInterfaceInfo(info);
+    				}
+    			}
+    		}
+    	}
     }
     
     public List<InterfaceInfo> getInterfaceInfoList(boolean refresh){
@@ -314,7 +388,16 @@ public class InterfaceManagementTool{
         this.imtPrivilege = imtPrivilege;
     }
 
-    public static void main( String[] args ){
+
+	public List<ImtGroup> getImtGroups() {
+		return imtGroups;
+	}
+
+	public void setImtGroups(List<ImtGroup> imtGroups) {
+		this.imtGroups = imtGroups;
+	}
+
+	public static void main( String[] args ){
 
         Set<String> paths = new HashSet<String>();
         paths.add("com.alibaba.imt");

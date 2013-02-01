@@ -3,6 +3,7 @@ package com.alibaba.imt.web;
 import static com.alibaba.imt.util.StringUtil.trimToNull;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -19,7 +20,7 @@ import com.alibaba.imt.adapter.privileges.ImtPrivilege;
  * @author hongwei.quhw
  *
  */
-public class ImtWebContext extends VelocityContext{
+public class ImtWebContext extends VelocityContext implements Serializable{
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private final String url;
 	private final String contextAttribute;
