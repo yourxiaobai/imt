@@ -89,9 +89,26 @@ public class InterfaceManagementTool{
             }
             InterfaceInfo ii = Util.mapToBean(data, InterfaceInfo.class);
             ImtInfo imtInfo = Util.mapToBean(data, ImtInfo.class);
+            
+            if (ii.getDatas() != null && ii.getDatas().length  >= 4) {
+            	imtInfo = new ImtInfo();
+            	imtInfo.setMehtodDescrption(ii.getDatas()[0]);
+            	imtInfo.setGroup(new String[] {ii.getDatas()[1], ii.getDatas()[2]});
+            	imtInfo.setEnv(ii.getDatas()[3]);
+            	int paraLength = ii.getDatas().length -4;
+            	if (paraLength > 0) {
+            		String[] params = new String[paraLength];
+            		for (int i  = 0; i < paraLength; i++) {
+            			params[i] = ii.getDatas()[4 + i];
+            		}
+            		imtInfo.setParamDescrption(params);
+            	}
+            }
+            
             if (null != ii && null != imtInfo) {
             	ii.setImtInfo(imtInfo);
             }
+            
             interfaceInfoList.add(ii);
             interfaceInfoMap.put(ii.getKey(), ii);
         }

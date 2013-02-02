@@ -31,6 +31,7 @@ public class ImtWebContext extends VelocityContext implements Serializable{
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
 	private final String encoding;
+	private final String uuid;
 	
 	private InterfaceManagementTool interfaceManagementTool;
 	private List<ImtPrivilege> imtPrivileges;
@@ -39,7 +40,7 @@ public class ImtWebContext extends VelocityContext implements Serializable{
 	public ImtWebContext(HttpServletRequest request, HttpServletResponse response,
 			String url, String contextAttribute,
 			String encoding, ServletContext servletContext, String[] args,
-			String[] additionalData, String key) {
+			String[] additionalData, String key, String uuid) {
 		super();
 		this.request = request;
 		this.response = response;
@@ -50,6 +51,7 @@ public class ImtWebContext extends VelocityContext implements Serializable{
 		this.args = args;
 		this.additionalData = additionalData;
 		this.key = key;
+		this.uuid = uuid;
 	}
 
 	public void render(String content) throws IOException {
@@ -119,6 +121,10 @@ public class ImtWebContext extends VelocityContext implements Serializable{
 
 	public ServletContext getServletContext() {
 		return servletContext;
+	}
+
+	public String getUuid() {
+		return uuid;
 	}
 
 	public String[] getArgs() {

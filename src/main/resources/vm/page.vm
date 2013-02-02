@@ -12,7 +12,7 @@
 #macro(renderMenu $groups)
 	<ul>
 	#foreach($group in $groups)
-		<li><a href="#" uuid="$group.uuid">$group.name</a></li>
+		<li><a href="javascript:;" uuid="$group.uuid">$group.name</a></li>
 		#if($group.nexts)
 			#renderMenu($group.nexts)
 		#end
@@ -31,59 +31,54 @@
 
 			<fieldset style="border:1px solid #ccc; padding:10px;">
 			  <legend>&nbsp;执行列表&nbsp;</legend>
-				<table>
-			    <thead>
-					  <tr>
-					    <th>接口描述</th>
-					    <th>所属类</th>
-					    <th>方法名称</th>
-					    <th>返回类型</th>
-					    <th>参数</th>
-					    <th>调用对象id</th>
-					    <th>操作</th>
-				    </tr>
-				</thead>
-				
-				#foreach($group in $groups)
-					#set($group2index = $velocityCount)
-					#foreach($nextGroup in $group.nexts)
-						<tbody id="group2_${group2index}_data_$velocityCount" style="display:none">
-							#foreach($item in $nextGroup.interfaceInfos)
-								<form id="form_${nextGroup.uuid}_$velocityCount">
-								<tr>
-									<td>$item.datas.get(0)</td>
-									<td>$item.className</td>
-									<td>$item.methodName</td>
-									<td>$item.returnClass.getSimpleName()</td>
-									<td>
-										#set($datasLength = $item.datas.size())
-										#foreach($arg in $item.argumentClasses)
-											#set($argNum = $velocityCount + 3)
-											#if($datasLength >= $argNum + 1)
-												$item.datas.get($argNum)
-											#else
-												$arg.getName();
-											#end
-											<input type="text" name="arg"/>
+				<table style="width: 100%">
+				    <thead>
+						  <tr>
+						    <th style="width: 20%">接口描述</th>
+						    <th style="width: 25%">所属类</th>
+						    <th style="width: 5%">方法名称</th>
+						    <th style="width: 10%">返回类型</th>
+						    <th style="width: 15%">参数</th>
+						    <th style="width: 20%">调用对象id</th>
+						    <th style="width: 5%">操作</th>
+					    </tr>
+					</thead>
+					
+					<tbody>
+						#foreach($item in $group.interfaceInfos)
+							<form id="form_${group.uuid}">
+							<tr>
+								<td>$item.imtInfo.mehtodDescrption</td>
+								<td>$item.className</td>
+								<td>$item.methodName</td>
+								<td>$item.returnClass.getSimpleName()</td>
+								<td>
+									#foreach($arg in $item.argumentClasses)
+										#if($!item.imtInfo.paramDescrption.size() >= $velocityCount)
+											#set($argNum = $velocityCount - 1)
+											$!item.imtInfo.paramDescrption.get($argNum)
+										#else
+											$arg.getName();
 										#end
-									</td>
-									<td>
-										<select name="additionalData">
-											#foreach($addData in $item.additionalDatas)
-												<option value="$addData">$addData</option>
-											#end
-										</select>
-									</td>
-									<td>
-										<input type="hidden" name="key" value="$!item.key"/>
-										<input type="button" class="imt-invoke" formId="form_${nextGroup.uuid}_$velocityCount" value="调用"/>
-									</td>
-								</tr>
-								</form>
-							#end
-						</tbody>
-					#end 
-				#end
+										<input type="text" name="arg"/>
+									#end
+								</td>
+								<td>
+									<select name="additionalData">
+										#foreach($addData in $item.additionalDatas)
+											<option value="$addData">$addData</option>
+										#end
+									</select>
+								</td>
+								<td>
+									<input type="hidden" name="key" value="$!item.key"/>
+									<input type="button" class="imt-invoke" formId="form_${group.uuid}" value="调用"/>
+								</td>
+							</tr>
+							</form>
+						#end
+				</tbody>
+				
 				</table>
 		</fieldset>
 		
@@ -94,7 +89,6 @@
 			<div id="imt-div-id-result"></div>
 		</fieldset>
 	</div>
-
 <br style="clear:both"/>
 
 </div>
@@ -102,21 +96,6 @@
 <script type="text/javascript">
 
 jQuery(function($) {
-	$("#imt_group_1").change(function() {
-		//$("#imt_group_2").html($("#" + $(this).val()).clone(true));
-		$("select.imt-se-2").hide();
-		$("tbody").hide();
-		$('#imt-div-id-result').html("");
-		$("#" + $(this).val()).show();
-	});
-	
-	$(".imt-se-2").change(function() {
-		//$("#imt-tbody").html($("#" + $(this).val()).contents().clone(true));
-		$("tbody").hide();
-		$('#imt-div-id-result').html("");
-		$("#" + $(this).val()).show();
-	});
-	
 	$(".imt-invoke").click(function() {
 		var formId = "#" + $(this).attr("formId");
 
@@ -134,15 +113,11 @@ jQuery(function($) {
 	$(".st_tree").SimpleTree({
 		click:function(a){
 			if(!$(a).attr("hasChild")) {
-				$["ajax"]({
-					url: "$url/uuid/" + $(a).attr("uuid"),
-					success: function(result) {
-						alert("success");
-						alert(result);
-					}
-				});
+				location.href = "$url?uuid=" + $(a).attr("uuid");
 			}
-		}
+		},
+		
+		uuid: "$!uuid"
 	});
 });
 

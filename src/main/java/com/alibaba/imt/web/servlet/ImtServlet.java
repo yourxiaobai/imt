@@ -41,7 +41,8 @@ public class ImtServlet extends HttpServlet{
 			servletContext, 
 			req.getParameterValues("arg"), 
 			req.getParameterValues("additionalData"), 
-			req.getParameter("key")
+			req.getParameter("key"),
+			req.getParameter("uuid")
 		));
 	}
 	

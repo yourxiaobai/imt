@@ -59,3 +59,8 @@
 .st_tree .hover{
 	background-color:#ffa;
 }
+
+.st_tree .selected {
+	background-color:#ffa;
+}
+}

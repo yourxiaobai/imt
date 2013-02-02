@@ -6,16 +6,13 @@ import static com.alibaba.imt.util.ResourceUtil.isImgResource;
 import static com.alibaba.imt.util.ResourceUtil.isInitPage;
 import static com.alibaba.imt.util.ResourceUtil.isJsResource;
 import static com.alibaba.imt.util.ResourceUtil.isMethodInvoke;
-import static com.alibaba.imt.util.ResourceUtil.renderContent;
 import static com.alibaba.imt.util.ResourceUtil.renderCssResource;
 import static com.alibaba.imt.util.ResourceUtil.renderImgResource;
 import static com.alibaba.imt.util.ResourceUtil.renderJsResource;
 import static com.alibaba.imt.util.ResourceUtil.renderMethodInvoke;
 import static com.alibaba.imt.util.ResourceUtil.renderPage;
-import static com.alibaba.imt.util.StringUtil.trimToNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.context.WebApplicationContext;
@@ -23,8 +20,6 @@ import org.springframework.web.context.WebApplicationContext;
 import com.alibaba.imt.InterfaceManagementTool;
 import com.alibaba.imt.adapter.privileges.ImtPrivilege;
 import com.alibaba.imt.bean.ImtGroup;
-import com.alibaba.imt.bean.ImtInfo;
-import com.alibaba.imt.bean.InterfaceInfo;
 import com.alibaba.imt.support.spring.BeanUtils;
 
 /**
@@ -39,10 +34,12 @@ public class ImtPageGen {
 		
 		if (isInitPage(imtWebContext)) {
 			//初始化页面
-			initData(imtWebContext);
+			initGroup(imtWebContext);
 			renderPage(imtWebContext);
 		} else if (isContent(imtWebContext)) {
-			renderContent(imtWebContext);	
+			//渲染主体页面
+			initContent(imtWebContext);
+			renderPage(imtWebContext);	
 		} else if (isMethodInvoke(imtWebContext)){
 			//调方法
 			renderMethodInvoke(imtWebContext);
@@ -60,7 +57,7 @@ public class ImtPageGen {
 		}
 	}
 	
-	private static void initData(ImtWebContext imtWebContext) {
+	private static void initGroup(ImtWebContext imtWebContext) {
 		imtWebContext.put("url", imtWebContext.getUrl());
 		imtWebContext.put("encoding", imtWebContext.getEncoding());
 		
@@ -73,10 +70,36 @@ public class ImtPageGen {
 		tool.initGroups();
 		
 		imtWebContext.put("groups", tool.getImtGroups());
-		imtWebContext.put("items", tool.getInterfaceInfoList());
+	}
+	
+	private static void initContent(ImtWebContext imtWebContext) {
+		initGroup(imtWebContext);
 		
+		List<ImtGroup> imtGroups = imtWebContext.getInterfaceManagementTool().getImtGroups();
+		imtWebContext.put("group", getGroupByUuid(imtGroups, imtWebContext.getUuid()));
+		imtWebContext.put("uuid", imtWebContext.getUuid());
 	}
 
+	private static ImtGroup getGroupByUuid(List<ImtGroup> imtGroups, String uuid) {
+		ImtGroup targetGroup = null;
+		for (ImtGroup imtGroup : imtGroups) {
+			if (uuid.equals(imtGroup.getUuid())) {
+				targetGroup = imtGroup;
+				break;
+			}
+			
+			if (null != imtGroup.getNexts()) {
+				targetGroup = getGroupByUuid(imtGroup.getNexts(), uuid);
+			}
+			
+			if (null != targetGroup) {
+				break;
+			}
+		}
+		
+		return targetGroup;
+	}
+	
 	private static boolean authUser(ImtWebContext imtWebContext) {
 		
 		ImtPrivilege imtPrivilege = imtWebContext.getInterfaceManagementTool().getImtPrivilege();

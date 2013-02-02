@@ -10,6 +10,16 @@ $(function(){
 			option.tree=this;	/* 在参数对象中添加对当前菜单树的引用，以便在对象中使用该菜单树 */
 			
 			option._init=function(){
+				if (option.uuid) {
+					var item = this.tree.find("a[uuid='" + option.uuid + "']");
+					item.parent("li").addClass("selected");
+					item.parents("ul").attr("show", true);
+				}
+				
+				option._render();
+			}/* option._init() End */
+			
+			option._render = function() {
 				/*
 				 * 初始化菜单展开状态，以及分叉节点的样式
 				 */				
@@ -18,7 +28,7 @@ $(function(){
 				
 				this.tree.find("ul ul[show='true']").show();	/* 显示 show 属性为 true 的子级菜单 */
 				this.tree.find("ul ul[show='true']").prev("li").addClass("open");	/* 添加 show 属性为 true 的子级菜单父节点的 open 样式 */
-			}/* option._init() End */
+			} 
 			
 			/* 设置所有超链接不响应单击事件 */
 			this.find("a").click(function(){ $(this).parents("li").click(); return false; });
@@ -47,7 +57,7 @@ $(function(){
 				}
 				
 				/* 初始化菜单 */
-				option._init();
+				option._render();
 			});
 			
 			this.find("li").hover(
