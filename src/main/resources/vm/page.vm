@@ -22,7 +22,7 @@
 
 
 #if($authed)
-<div style="width: 960px; margin: 30px auto;">
+<div style="width: 80%; margin: 30px auto;">
 	<div class="st_tree" style="float: left;display: inline;width: 15%; border:1px solid #ccc;">
 		#renderMenu($groups)
 	</div>
