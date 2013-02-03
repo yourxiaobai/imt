@@ -93,8 +93,8 @@ public class InterfaceManagementTool{
             if (ii.getDatas() != null && ii.getDatas().length  >= 4) {
             	imtInfo = new ImtInfo();
             	imtInfo.setMehtodDescrption(ii.getDatas()[0]);
-            	imtInfo.setGroup(new String[] {ii.getDatas()[1], ii.getDatas()[2]});
-            	imtInfo.setEnv(ii.getDatas()[3]);
+            	imtInfo.setGroup(new String[] {ii.getDatas()[2], ii.getDatas()[3]});
+            	imtInfo.setEnv(ii.getDatas()[1]);
             	int paraLength = ii.getDatas().length -4;
             	if (paraLength > 0) {
             		String[] params = new String[paraLength];

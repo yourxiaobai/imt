@@ -29,16 +29,16 @@
 	
 	<div style="float:right; display:inline;width: 80%;border:1px solid #ccc; padding:10px;">
 
-			<fieldset style="border:1px solid #ccc; padding:10px;">
+			<fieldset style="border:1px solid #ccc; padding:10px; width:97%">
 			  <legend>&nbsp;执行列表&nbsp;</legend>
-				<table style="width: 100%">
+				<table style="width: 100%;word-break:break-all;word-wrap:break-word;overflow:hidden;">
 				    <thead>
 						  <tr>
-						    <th style="width: 20%">接口描述</th>
+						    <th style="width: 15%">接口描述</th>
 						    <th style="width: 25%">所属类</th>
-						    <th style="width: 5%">方法名称</th>
-						    <th style="width: 10%">返回类型</th>
-						    <th style="width: 15%">参数</th>
+						    <th style="width: 12%">方法名称</th>
+						    <th style="width: 12%">返回类型</th>
+						    <th style="width: 11%">参数</th>
 						    <th style="width: 20%">调用对象id</th>
 						    <th style="width: 5%">操作</th>
 					    </tr>
@@ -46,7 +46,7 @@
 					
 					<tbody>
 						#foreach($item in $group.interfaceInfos)
-							<form id="form_${group.uuid}">
+							<form id="form_${group.uuid}_$velocityCount">
 							<tr>
 								<td>$item.imtInfo.mehtodDescrption</td>
 								<td>$item.className</td>
@@ -64,7 +64,7 @@
 									#end
 								</td>
 								<td>
-									<select name="additionalData">
+									<select name="additionalData" style="width:150px">
 										#foreach($addData in $item.additionalDatas)
 											<option value="$addData">$addData</option>
 										#end
@@ -72,13 +72,12 @@
 								</td>
 								<td>
 									<input type="hidden" name="key" value="$!item.key"/>
-									<input type="button" class="imt-invoke" formId="form_${group.uuid}" value="调用"/>
+									<input type="button" class="imt-invoke" formId="form_${group.uuid}_$velocityCount" value="调用"/>
 								</td>
 							</tr>
 							</form>
 						#end
-				</tbody>
-				
+					</tbody>
 				</table>
 		</fieldset>
 		
