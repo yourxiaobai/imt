@@ -25,7 +25,7 @@ public @interface Imt {
 	 * 适用环境开发，测试，线上
 	 * @return
 	 */
-	String env() default ImtConstant.ENV_PRODUCTION;
+	String env() default ImtConstant.ENV_PRODUCT;
 	
 	/**
 	 * 分组
