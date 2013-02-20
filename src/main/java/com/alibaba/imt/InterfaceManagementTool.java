@@ -275,6 +275,7 @@ public class InterfaceManagementTool{
         
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private CheckResult<String> checkAndConvertArgs(Class<?>[] argumentClasses, Object[] args) {
         CheckResult<String> cr = new CheckResult<String>();
         cr.setPassed(true);
@@ -317,6 +318,8 @@ public class InterfaceManagementTool{
                     }
                 }else if(argumentClass.isArray()){
                     args[i] = convertArrayArgument(argStr, argumentClass.getComponentType());
+                }else if(argumentClass.isEnum()){
+                    args[i] = Enum.valueOf((Class<? extends Enum>)argumentClass, argStr);
                 }else{
                     args[i] = JSON.parseObject(argStr, argumentClass);
                 }
