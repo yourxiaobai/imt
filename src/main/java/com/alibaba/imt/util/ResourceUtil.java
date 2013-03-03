@@ -34,7 +34,7 @@ public class ResourceUtil {
 	}
 	
 	public static boolean isMethodInvoke(ImtWebContext imtWebContext) {
-		return null != imtWebContext.getAdditionalData();
+		return null != imtWebContext.getKey();
 	}
 	
 	public static boolean isResource(ImtWebContext imtWebContext) {
