@@ -1,12 +1,11 @@
 package com.alibaba.imt.adapter.imp;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-
 import com.alibaba.imt.adapter.BeanAdapter;
+import com.alibaba.imt.asm.ClassWriter;
+import com.alibaba.imt.asm.Label;
+import com.alibaba.imt.asm.MethodVisitor;
+import com.alibaba.imt.asm.Opcodes;
+import com.alibaba.imt.asm.Type;
 
 
 public class RomaBeanAdapter implements BeanAdapter,Opcodes {

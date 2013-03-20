@@ -23,7 +23,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.objectweb.asm.Type;
+import com.alibaba.imt.asm.Type;
+
 
 /**
  * 

@@ -22,15 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-
 import com.alibaba.imt.annotation.Imt;
 import com.alibaba.imt.annotation.Interface;
+import com.alibaba.imt.asm.AnnotationVisitor;
+import com.alibaba.imt.asm.ClassReader;
+import com.alibaba.imt.asm.ClassVisitor;
+import com.alibaba.imt.asm.MethodVisitor;
+import com.alibaba.imt.asm.Opcodes;
+import com.alibaba.imt.asm.Type;
 import com.alibaba.imt.handler.Handler;
 import com.alibaba.imt.util.Util;
 

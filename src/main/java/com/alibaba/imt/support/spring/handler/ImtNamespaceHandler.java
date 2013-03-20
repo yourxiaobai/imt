@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.objectweb.asm.Type;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -20,6 +19,7 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 import com.alibaba.imt.InterfaceManagementTool;
+import com.alibaba.imt.asm.Type;
 import com.alibaba.imt.support.spring.adapter.SpringBeanAdapter;
 import com.alibaba.imt.support.spring.scanner.SpringClassScanner;
 import com.alibaba.imt.util.Util;
