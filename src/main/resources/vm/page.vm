@@ -6,6 +6,18 @@
     <link rel="stylesheet" type="text/css" href="$url/css/simpletree.css"/>
 	<script type="text/javascript" src="$url/js/jquery.js"></script>  
 	<script type="text/javascript" src="$url/js/simpletree.js"></script>
+	
+	<style>
+		body {
+			font: 12px 宋体;
+		}
+		table {
+			border-spacing: 0;
+		}
+		td {
+			border-bottom: 1px solid #ccd;
+		}
+	</style>
 </head>
 <body>
 
